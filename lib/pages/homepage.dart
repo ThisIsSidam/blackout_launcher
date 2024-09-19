@@ -1,4 +1,5 @@
 import 'package:blackout_launcher/constants/assets.dart';
+import 'package:blackout_launcher/pages/utils/clock.dart';
 import 'package:flutter/material.dart';
 import 'package:installed_apps/app_info.dart';
 import 'package:installed_apps/installed_apps.dart';
@@ -41,16 +42,7 @@ class _HomepageState extends State<Homepage> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             if (_controller.text.isEmpty) ...<Widget>[
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  DateTime.now().toString().substring(10, 19),
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 64,
-                  ),
-                ),
-              ),
+              const ClockWidget(),
               const Spacer(),
             ]
             else
@@ -60,10 +52,13 @@ class _HomepageState extends State<Homepage> {
                   scrollDirection: Axis.vertical,
                   child: FutureBuilder<List<AppInfo>>(
                     future: applications, 
-                    builder: (context, AsyncSnapshot snapshot) {
+                    builder: (context, AsyncSnapshot<List<AppInfo>> snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const ListTile(
-                          title: CircularProgressIndicator()
+                          title: SizedBox(
+                            width: 36,
+                            child: CircularProgressIndicator()
+                          )
                         );
                       }
                       else if (snapshot.hasData) {
@@ -110,9 +105,7 @@ class _HomepageState extends State<Homepage> {
                     borderRadius: BorderRadius.circular(20),
                   ),
                 ),
-                style: const TextStyle(
-                  color: Colors.white,
-                ),
+                style: Theme.of(context).textTheme.bodyMedium,
                 onChanged: (value) {
                   setState((){});
                 },
@@ -137,7 +130,7 @@ class _HomepageState extends State<Homepage> {
       ),
       title: Text(
         app.name,
-        style: const TextStyle(color: Colors.white),
+        style: Theme.of(context).textTheme.bodySmall,
       ),
       onTap: () => InstalledApps.startApp(app.packageName),
     );
