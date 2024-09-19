@@ -12,23 +12,11 @@ class ClockWidget extends StatelessWidget {
         top: MediaQuery.sizeOf(context).height * 0.1,
         bottom: 8, left: 8, right: 8
       ),
-      child: StatefulBuilder(
-        builder: (context, setState) {
-
-          int secondsRemaining = 60 - DateTime.now().second;
-          Timer.periodic(Duration(seconds: secondsRemaining), (timer_0) {
-
-            setState(() {});
-
-            Timer.periodic(const Duration(minutes: 1), (timer) {
-              setState(() {});
-            });
-
-            timer_0.cancel();
-          });
-
+      child: StreamBuilder(
+        stream: Stream.periodic(const Duration(seconds: 1)),
+        builder: (context, snapshot) {
           return Text(
-            DateTime.now().toString().substring(10, 16),
+            DateTime.now().toString().substring(10, 19),
             style: const TextStyle(
               color: Colors.white,
               fontSize: 64,

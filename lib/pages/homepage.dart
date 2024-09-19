@@ -35,7 +35,7 @@ class _HomepageState extends State<Homepage> {
     Future<List<AppInfo>> applications = getApps();
 
     return Scaffold(
-      backgroundColor: Colors.grey[850],
+      backgroundColor: Colors.transparent,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -119,6 +119,7 @@ class _HomepageState extends State<Homepage> {
 
   Widget _buildAppTile(AppInfo app) {
     return ListTile(
+      tileColor: Colors.black12,
       leading: ConstrainedBox(
         constraints: const BoxConstraints(
           maxHeight: 24, 
