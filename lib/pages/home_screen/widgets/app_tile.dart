@@ -20,7 +20,7 @@ class AppTile extends StatelessWidget {
           maxHeight: 24, 
           minWidth: 24
         ),
-        child: app.iconImage
+        child: app.getIconImage()
       ),
       title: Text(
         app.name,
