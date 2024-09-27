@@ -1,17 +1,19 @@
-import 'package:blackout_launcher/constants/assets.dart';
-import 'package:blackout_launcher/pages/utils/clock.dart';
+import 'package:blackout_launcher/pages/home_screen/widgets/app_tile.dart';
+import 'package:blackout_launcher/pages/home_screen/widgets/clock.dart';
+import 'package:blackout_launcher/router/app_router.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:installed_apps/app_info.dart';
 import 'package:installed_apps/installed_apps.dart';
 
-class Homepage extends StatefulWidget {
-  const Homepage({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
   @override
-  State<Homepage> createState() => _HomepageState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomepageState extends State<Homepage> {
+class _HomeScreenState extends State<HomeScreen> {
 
   final TextEditingController _controller = TextEditingController();
   List<AppInfo> applications = <AppInfo>[];
@@ -72,7 +74,7 @@ class _HomepageState extends State<Homepage> {
                               .take(5)
                               .toList()
                             )
-                              _buildAppTile(app),
+                              AppTile(app: app),
                           ],
                         );
                       }
@@ -98,17 +100,25 @@ class _HomepageState extends State<Homepage> {
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: TextField(
-                controller: _controller,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
+              child: ListTile(
+                contentPadding: EdgeInsets.zero,
+                shape: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
                 ),
-                style: Theme.of(context).textTheme.bodyMedium,
-                onChanged: (value) {
-                  setState((){});
-                },
+                title: TextField(
+                  controller: _controller,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  decoration: null,
+                  onChanged: (value) {
+                    setState((){});
+                  },
+                ),
+                trailing: IconButton(
+                  icon: const Icon(Icons.menu),
+                  onPressed: () {
+                    context.go(AppRoute.settings.path);
+                  },
+                ),
               ),
             ),
           ],
@@ -116,25 +126,4 @@ class _HomepageState extends State<Homepage> {
       ),
     );
   }
-
-  Widget _buildAppTile(AppInfo app) {
-    return ListTile(
-      tileColor: Colors.black12,
-      leading: ConstrainedBox(
-        constraints: const BoxConstraints(
-          maxHeight: 24, 
-          minWidth: 24
-        ),
-        child: app.icon != null
-        ? Image.memory(app.icon!)
-        : Image.asset(Images.defaultIcon.path)
-      ),
-      title: Text(
-        app.name,
-        style: Theme.of(context).textTheme.bodySmall,
-      ),
-      onTap: () => InstalledApps.startApp(app.packageName),
-    );
-  }
-
 }

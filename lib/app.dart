@@ -1,4 +1,4 @@
-import 'package:blackout_launcher/pages/homepage.dart';
+import 'package:blackout_launcher/router/app_router.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 
@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
             brightness: Brightness.dark,
           );
         }
-        return MaterialApp(
+        return MaterialApp.router(
           theme: ThemeData(
             colorScheme: lightColorScheme,
             useMaterial3: true,
@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
             useMaterial3: true
           ),
           themeMode: ThemeMode.system,
-          home: const Homepage()
+          routerConfig: router,
         );
       }
     );
