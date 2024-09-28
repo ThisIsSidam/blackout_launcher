@@ -6,29 +6,22 @@ import 'package:installed_apps/installed_apps.dart';
 class AppButton extends StatelessWidget {
   const AppButton({
     required this.app,
-    this.width = 60,
+    this.size = 50,
     super.key
   });
 
   final AppInfo app;
-  final double width;
+  final double size;
 
   @override
   Widget build(BuildContext context) {
-    final double hw = (width/3) * 2; // icon height and width
     return SizedBox(
-      width: width,
+      width: size,
       child: GestureDetector(
         onTap: () => InstalledApps.startApp(app.packageName),
         child: Column(
           children: [
-            app.getIconImage(h: hw, w: hw),
-            Text(
-              app.name,
-              style: Theme.of(context).textTheme.labelSmall,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            )
+            app.getIconImage(h: size, w: size),
           ],
         ),
       ),
