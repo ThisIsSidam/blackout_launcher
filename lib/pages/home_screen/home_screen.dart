@@ -1,7 +1,7 @@
 import 'package:blackout_launcher/pages/home_screen/widgets/app_button.dart';
 import 'package:blackout_launcher/pages/home_screen/widgets/app_tile.dart';
 import 'package:blackout_launcher/pages/home_screen/widgets/clock.dart';
-import 'package:blackout_launcher/pages/home_screen/widgets/drawer.dart';
+import 'package:blackout_launcher/pages/home_screen/widgets/home_drawer.dart';
 import 'package:blackout_launcher/pages/settings_screen/favourites_provider.dart';
 import 'package:blackout_launcher/router/app_router.dart';
 import 'package:flutter/material.dart';

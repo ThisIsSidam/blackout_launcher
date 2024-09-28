@@ -7,14 +7,13 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:installed_apps/app_info.dart';
 import 'package:installed_apps/installed_apps.dart';
 
-class FavouritesScreen extends HookConsumerWidget {
+class FavouritesScreen extends StatelessWidget {
   const FavouritesScreen({super.key});
 
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
 
-    List<String> favouritePackageNames = ref.watch(favouritesProvider).favourites;
 
     return Scaffold(
       appBar: AppBar(
@@ -31,31 +30,37 @@ class FavouritesScreen extends HookConsumerWidget {
           if (snapshot.hasData) {
             final List<AppInfo> apps = snapshot.data!;
 
-            return ListView.separated(
-              itemCount: apps.length,
-              separatorBuilder: (context, index) => const SizedBox(height: 8),
-              itemBuilder: (context, index) {
-                return ListTile(
-                  leading: apps[index].getIconImage(),
-                  title: Text(apps[index].name),
-                  trailing: favouritePackageNames.contains(apps[index].packageName)
-                    ? const Icon(Icons.favorite, color: Colors.red)
-                    : const Icon(Icons.favorite_border),
-                  onTap: () {
-                    if (favouritePackageNames.contains(apps[index].packageName)) {
-                      ref.read(favouritesProvider).removeApp(apps[index].packageName);
-                    } else {
+            return Consumer(
+              builder: (context, ref, child) {
+                List<String> favouritePackageNames = ref.watch(favouritesProvider).favourites;
 
-                      if (favouritePackageNames.length > 4) {
-                        Fluttertoast.showToast(msg: 'Not more than 5 favourites');
-                        return;
-                      }
-
-                      ref.read(favouritesProvider).addApp(apps[index].packageName);
-                    }
+                return ListView.separated(
+                  itemCount: apps.length,
+                  separatorBuilder: (context, index) => const SizedBox(height: 8),
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      leading: apps[index].getIconImage(),
+                      title: Text(apps[index].name),
+                      trailing: favouritePackageNames.contains(apps[index].packageName)
+                        ? const Icon(Icons.favorite, color: Colors.red)
+                        : const Icon(Icons.favorite_border),
+                      onTap: () {
+                        if (favouritePackageNames.contains(apps[index].packageName)) {
+                          ref.read(favouritesProvider).removeApp(apps[index].packageName);
+                        } else {
+                
+                          if (favouritePackageNames.length > 4) {
+                            Fluttertoast.showToast(msg: 'Not more than 5 favourites');
+                            return;
+                          }
+                
+                          ref.read(favouritesProvider).addApp(apps[index].packageName);
+                        }
+                      },
+                    );
                   },
                 );
-              },
+              }
             );
           }
 
