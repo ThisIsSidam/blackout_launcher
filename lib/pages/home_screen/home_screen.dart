@@ -29,6 +29,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      // For opening the drawer on slide
       onPanEnd: (details) {
         // Threshold to determine if the gesture is primarily horizontal
         const double threshold = 1; // Increase to make it stricter
@@ -59,7 +60,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   if (_controller.text.isEmpty) ...<Widget>[
-                    const ClockWidget(),
+                    const Flexible(child: ClockWidget()),
                     const Spacer(),
                   ] else
                     Flexible(

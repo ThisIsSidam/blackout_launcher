@@ -111,18 +111,18 @@ class AppLauncher extends ConsumerWidget {
   Widget _buildFavouriteButton(WidgetRef ref, bool isFavourite) {
     return isFavourite
         ? MenuItemButton(
-            leadingIcon: Icon(Icons.heart_broken),
+            leadingIcon: const Icon(Icons.heart_broken),
             onPressed: () {
               ref.read(favouritesProvider).removeApp(app.packageName);
             },
-            child: Text('Unfavourite'),
+            child: const Text('Unfavourite'),
           )
         : MenuItemButton(
-            leadingIcon: Icon(Icons.favorite_outline),
+            leadingIcon: const Icon(Icons.favorite_outline),
             onPressed: () {
               ref.read(favouritesProvider).addApp(app.packageName);
             },
-            child: Text('Favourite'),
+            child: const Text('Favourite'),
           );
   }
 }
