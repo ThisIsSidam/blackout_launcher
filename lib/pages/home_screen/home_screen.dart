@@ -3,12 +3,13 @@ import 'package:blackout_launcher/pages/home_screen/widgets/clock.dart';
 import 'package:blackout_launcher/pages/home_screen/widgets/home_drawer.dart';
 import 'package:blackout_launcher/pages/settings_screen/favourites_provider.dart';
 import 'package:blackout_launcher/provider/apps_provider.dart';
-import 'package:blackout_launcher/router/app_router.dart';
 import 'package:blackout_launcher/shared/async_widget/async_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:installed_apps/app_info.dart';
+
+import '../../router/app_router.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -64,69 +65,76 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     const Spacer(),
                   ] else
                     Flexible(
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.vertical,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            for (var app in apps
-                                .where((app) => app.name
-                                    .toLowerCase()
-                                    .contains(_controller.text.toLowerCase()))
-                                .take(5))
-                              AppLauncher(
-                                app: app,
-                                launcherType: LauncherType.tile,
-                              ),
-                          ],
-                        ),
-                      ),
+                      child: _buildListOfApps(apps),
                     ),
-                  Consumer(builder: (context, ref, child) {
-                    List<String> favourites =
-                        ref.watch(favouritesProvider).favourites;
-                    List<AppInfo> favouriteApps = apps
-                        .where((app) => favourites.contains(app.packageName))
-                        .toList();
-                    return Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          for (final app in favouriteApps)
-                            AppLauncher(
-                              app: app,
-                              launcherType: LauncherType.iconOnly,
-                            ),
-                        ]);
-                  }),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      shape: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      title: TextField(
-                        controller: _controller,
-                        style: Theme.of(context).textTheme.bodyMedium,
-                        decoration: null,
-                        onChanged: (value) {
-                          setState(() {});
-                        },
-                      ),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.menu),
-                        onPressed: () {
-                          context.go(AppRoute.settings.path);
-                        },
-                      ),
-                    ),
-                  ),
+                  _buildFavouritesRow(apps),
+                  _buildBottomSearchBar(),
                 ],
               );
             },
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildListOfApps(List<AppInfo> apps) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.vertical,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          for (var app in apps
+              .where((app) => app.name
+                  .toLowerCase()
+                  .contains(_controller.text.toLowerCase()))
+              .take(5))
+            AppLauncher(
+              app: app,
+              launcherType: LauncherType.tile,
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBottomSearchBar() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: SearchBar(
+        controller: _controller,
+        trailing: [
+          IconButton(
+              icon: const Icon(Icons.menu),
+              onPressed: () {
+                context.go(AppRoute.settings.path);
+              }),
+        ],
+        padding: const WidgetStatePropertyAll(
+            EdgeInsets.symmetric(vertical: 0, horizontal: 12)),
+        onChanged: (value) {
+          setState(() {});
+        },
+      ),
+    );
+  }
+
+  Widget _buildFavouritesRow(List<AppInfo> apps) {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Consumer(builder: (context, ref, child) {
+        List<String> favourites = ref.watch(favouritesProvider).favourites;
+        List<AppInfo> favouriteApps =
+            apps.where((app) => favourites.contains(app.packageName)).toList();
+        return Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+          for (final app in favouriteApps)
+            AppLauncher(
+              app: app,
+              launcherType: LauncherType.iconOnly,
+              iconSize: 44,
+            ),
+        ]);
+      }),
     );
   }
 }
