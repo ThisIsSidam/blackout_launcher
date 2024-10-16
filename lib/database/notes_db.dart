@@ -3,7 +3,7 @@ import 'package:blackout_launcher/feature/Notes/modal/notes_modal.dart';
 import 'package:hive/hive.dart';
 
 class NotesDB {
-  static final Box<dynamic> _box = Hive.box(HiveBox.notes.name);
+  static final Box<dynamic> _box = Hive.box(HiveBoxNames.notes.name);
   static const String _noteKey = 'NOTES';
 
   /// Returns all the notes present in the database
@@ -18,12 +18,12 @@ class NotesDB {
     await _box.put(_noteKey, notes);
   }
 
-  /// Match and remove a note 
+  /// Match and remove a note
   static Future<void> removeData(NoteModal note) async {
     final List<NoteModal> notes = getNotes();
     for (final NoteModal n in notes) {
       if (n == note) {
-        notes.remove(n); 
+        notes.remove(n);
         break;
       }
     }

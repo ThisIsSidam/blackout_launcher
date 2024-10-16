@@ -4,12 +4,11 @@ import 'package:hive/hive.dart';
 /// Hive Database for set of apps stored by user.
 /// The categories are the favourites app and then apps
 /// categorized through different tags/categories created
-/// by the user. 
-/// 
+/// by the user.
+///
 /// Value would be [Map<String, Set<String>>]
 class AppCategoriesDB {
-  static final Box<dynamic> _box = Hive.box(HiveBox.appCategories.name);
-
+  static final Box<dynamic> _box = Hive.box(HiveBoxNames.appCategories.name);
 
   /// Gets the list of packageNames in a certain category.
   static List<String> getApps(String category) {

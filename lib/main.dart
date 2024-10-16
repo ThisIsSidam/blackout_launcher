@@ -9,9 +9,10 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Hive.initFlutter();
-  await Hive.openBox(HiveBox.appCategories.name);
   Hive.registerAdapter(NoteModalAdapter());
-  await Hive.openBox(HiveBox.notes.name);
+  await Hive.openBox(HiveBoxNames.appCategories.name);
+  await Hive.openBox(HiveBoxNames.notes.name);
+  await Hive.openBox(HiveBoxNames.userSettings.name);
 
   runApp(const ProviderScope(child: MyApp()));
 }

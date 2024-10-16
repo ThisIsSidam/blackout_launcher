@@ -1,7 +1,6 @@
-import 'package:blackout_launcher/router/app_router.dart';
+import 'package:blackout_launcher/pages/settings_screen/user_preferences_section/user_pref_section.dart';
 import 'package:blackout_launcher/shared/back_arrow.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -19,33 +18,11 @@ class SettingsScreen extends StatelessWidget {
           children: [
             SingleChildScrollView(
                 child: Column(
-              children: [
-                _buildSectionTitle('User', context),
-                ListTile(
-                    title: const Text('Edit favourite apps'),
-                    onTap: () {
-                      context.go(AppRoute.favourites.path);
-                    }),
-              ],
+              children: [UserPreferencesSection()],
             )),
             _buildVersionWidget(),
           ],
         ));
-  }
-
-  Widget _buildSectionTitle(String title, BuildContext context) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-          child: Text(
-            title,
-            style: Theme.of(context)
-                .textTheme
-                .titleMedium!
-                .copyWith(fontWeight: FontWeight.bold),
-          )),
-    );
   }
 
   Widget _buildVersionWidget() {

@@ -24,9 +24,6 @@ class AppLauncher extends ConsumerWidget {
 
   final AppInfo app;
   final LauncherType launcherType;
-
-  /// The size of the icon.
-  /// Only for LauncherType.iconAndText and LauncherType.iconOnly
   final double iconSize;
 
   @override
@@ -98,9 +95,11 @@ class AppLauncher extends ConsumerWidget {
 
   Widget _buildTileButton(BuildContext context) {
     return ListTile(
+        minTileHeight: iconSize,
         tileColor: Colors.black12,
         leading: ConstrainedBox(
-            constraints: const BoxConstraints(maxHeight: 24, minWidth: 24),
+            constraints:
+                BoxConstraints(maxHeight: iconSize - 4, minWidth: iconSize - 4),
             child: app.getIconImage()),
         title: Text(
           app.name,

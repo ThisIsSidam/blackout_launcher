@@ -4,6 +4,7 @@ import 'package:blackout_launcher/pages/home_screen/widgets/home_drawer.dart';
 import 'package:blackout_launcher/pages/settings_screen/favourites_provider.dart';
 import 'package:blackout_launcher/provider/apps_provider.dart';
 import 'package:blackout_launcher/shared/async_widget/async_widget.dart';
+import 'package:blackout_launcher/shared/providers/user_settings_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -29,6 +30,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final userSettings = ref.watch(userSettingProvider);
     return GestureDetector(
       // For opening the drawer on slide
       onPanEnd: (details) {
@@ -65,9 +67,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     const Spacer(),
                   ] else
                     Flexible(
-                      child: _buildListOfApps(apps),
+                      child: _buildListOfApps(apps, userSettings),
                     ),
-                  _buildFavouritesRow(apps),
+                  _buildFavouritesRow(apps, userSettings),
                   _buildBottomSearchBar(),
                 ],
               );
@@ -78,7 +80,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _buildListOfApps(List<AppInfo> apps) {
+  Widget _buildListOfApps(List<AppInfo> apps, SettingsNotifier settings) {
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
       child: Column(
@@ -92,6 +94,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             AppLauncher(
               app: app,
               launcherType: LauncherType.tile,
+              iconSize: settings.iconScale,
             ),
         ],
       ),
@@ -119,7 +122,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _buildFavouritesRow(List<AppInfo> apps) {
+  Widget _buildFavouritesRow(List<AppInfo> apps, SettingsNotifier settings) {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Consumer(builder: (context, ref, child) {
@@ -131,7 +134,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             AppLauncher(
               app: app,
               launcherType: LauncherType.iconOnly,
-              iconSize: 44,
+              iconSize: settings.iconScale,
             ),
         ]);
       }),

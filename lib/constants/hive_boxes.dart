@@ -1,10 +1,10 @@
-enum HiveBox{
-  
+enum HiveBoxNames {
   appCategories('app_categories'),
   notes('NoTeS'),
+  userSettings('userSettings'),
   ;
 
-  const HiveBox(this.name);
+  const HiveBoxNames(this.name);
 
   final String name;
 }
