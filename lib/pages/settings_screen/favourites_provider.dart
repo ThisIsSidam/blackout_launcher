@@ -3,16 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class FavouritesNotifier extends ChangeNotifier {
-  final favourites = AppCategoriesDB.getApps('favourites');
+  List<String> favourites = AppCategoriesDB.getApps('favourites');
 
   void addApp(String packageName) {
-    debugPrint('addApp: $packageName');
+    if (favourites.contains(packageName)) return;
+
     AppCategoriesDB.addData('favourites', packageName);
+    favourites = AppCategoriesDB.getApps('favourites');
+    debugPrint('addApp: $packageName');
     notifyListeners();
   }
 
   void removeApp(String packageName) {
+    if (!favourites.contains(packageName)) return;
+
     AppCategoriesDB.removeData('favourites', packageName);
+    favourites = AppCategoriesDB.getApps('favourites');
     notifyListeners();
   }
 }

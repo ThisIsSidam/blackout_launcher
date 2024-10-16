@@ -29,16 +29,11 @@ class AppLauncher extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final favourites = ref.watch(favouritesProvider).favourites;
-    ValueNotifier<bool> isFavouriteNotifier =
-        ValueNotifier(favourites.contains(app.packageName));
+    final isFavourite = favourites.contains(app.packageName);
 
     return MenuAnchor(
         menuChildren: [
-          ValueListenableBuilder(
-              valueListenable: isFavouriteNotifier,
-              builder: (context, value, child) {
-                return _buildFavouriteButton(ref, value);
-              }),
+          _buildFavouriteButton(ref, isFavourite),
           MenuItemButton(
             leadingIcon: const Icon(Icons.info_outline),
             child: const Text('App Info'),
@@ -105,18 +100,18 @@ class AppLauncher extends ConsumerWidget {
   Widget _buildFavouriteButton(WidgetRef ref, bool isFavourite) {
     return isFavourite
         ? MenuItemButton(
-            leadingIcon: Icon(Icons.favorite),
-            onPressed: () {
-              ref.read(favouritesProvider).addApp(app.packageName);
-            },
-            child: Text('Favourite'),
-          )
-        : MenuItemButton(
-            leadingIcon: Icon(Icons.favorite_outline),
+            leadingIcon: Icon(Icons.heart_broken),
             onPressed: () {
               ref.read(favouritesProvider).removeApp(app.packageName);
             },
             child: Text('Unfavourite'),
+          )
+        : MenuItemButton(
+            leadingIcon: Icon(Icons.favorite_outline),
+            onPressed: () {
+              ref.read(favouritesProvider).addApp(app.packageName);
+            },
+            child: Text('Favourite'),
           );
   }
 }
