@@ -1,5 +1,4 @@
-import 'package:blackout_launcher/pages/home_screen/widgets/app_button.dart';
-import 'package:blackout_launcher/pages/home_screen/widgets/app_tile.dart';
+import 'package:blackout_launcher/pages/home_screen/widgets/app_launcher/app_launcher.dart';
 import 'package:blackout_launcher/pages/home_screen/widgets/clock.dart';
 import 'package:blackout_launcher/pages/home_screen/widgets/home_drawer.dart';
 import 'package:blackout_launcher/pages/settings_screen/favourites_provider.dart';
@@ -74,7 +73,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     .toLowerCase()
                                     .contains(_controller.text.toLowerCase()))
                                 .take(5))
-                              AppTile(app: app),
+                              AppLauncher(
+                                app: app,
+                                launcherType: LauncherType.tile,
+                              ),
                           ],
                         ),
                       ),
@@ -88,7 +90,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     return Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          for (final app in favouriteApps) AppButton(app: app),
+                          for (final app in favouriteApps)
+                            AppLauncher(
+                              app: app,
+                              launcherType: LauncherType.iconOnly,
+                            ),
                         ]);
                   }),
                   Padding(

@@ -2,7 +2,7 @@ import 'package:blackout_launcher/database/user_pref_db.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class FavouritesNotifier extends ChangeNotifier{
+class FavouritesNotifier extends ChangeNotifier {
   final favourites = AppCategoriesDB.getApps('favourites');
 
   void addApp(String packageName) {
@@ -20,4 +20,3 @@ class FavouritesNotifier extends ChangeNotifier{
 final favouritesProvider = ChangeNotifierProvider<FavouritesNotifier>((ref) {
   return FavouritesNotifier();
 });
-
