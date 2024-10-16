@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:android_intent_plus/android_intent.dart';
 import 'package:blackout_launcher/pages/settings_screen/favourites_provider.dart';
 import 'package:blackout_launcher/shared/app_info_plus.dart';
 import 'package:flutter/material.dart';
@@ -37,7 +40,15 @@ class AppLauncher extends ConsumerWidget {
           MenuItemButton(
             leadingIcon: const Icon(Icons.info_outline),
             child: const Text('App Info'),
-            onPressed: () {},
+            onPressed: () async {
+              if (Platform.isAndroid) {
+                final intent = AndroidIntent(
+                  action: 'action_application_details_settings',
+                  data: 'package:${app.packageName}',
+                );
+                await intent.launch();
+              }
+            },
           )
         ],
         builder: (context, controller, child) {
