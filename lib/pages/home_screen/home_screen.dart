@@ -1,6 +1,7 @@
 import 'package:blackout_launcher/pages/home_screen/widgets/app_launcher/app_launcher.dart';
 import 'package:blackout_launcher/pages/home_screen/widgets/clock.dart';
 import 'package:blackout_launcher/pages/home_screen/widgets/home_drawer.dart';
+import 'package:blackout_launcher/pages/home_screen/widgets/swipe_detector.dart';
 import 'package:blackout_launcher/pages/settings_screen/favourites_provider.dart';
 import 'package:blackout_launcher/shared/async_widget/async_widget.dart';
 import 'package:blackout_launcher/shared/providers/apps_provider.dart';
@@ -31,22 +32,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final userSettings = ref.watch(userSettingProvider);
-    return GestureDetector(
-      // For opening the drawer on slide
-      onPanEnd: (details) {
-        // Threshold to determine if the gesture is primarily horizontal
-        const double threshold = 1; // Increase to make it stricter
-
-        // Calculate the absolute values of vertical and horizontal velocities
-        double vx = details.velocity.pixelsPerSecond.dx.abs();
-        double vy = details.velocity.pixelsPerSecond.dy.abs();
-
-        // Check if the horizontal velocity is significantly larger than the vertical velocity
-        if (vx > threshold * vy) {
-          if (details.velocity.pixelsPerSecond.dx > 0) {
-            _scaffoldKey.currentState!.openDrawer();
-          } else {}
-        }
+    return SwipeDetector(
+      onSwipeRight: () {
+        _scaffoldKey.currentState!.openDrawer();
+      },
+      onSwipeLeft: () {
+        print('left');
+      },
+      onSwipeUpwards: () {
+        print('up');
+      },
+      onSwipeDownwards: () {
+        print('down');
       },
       child: PopScope(
         canPop: false,
