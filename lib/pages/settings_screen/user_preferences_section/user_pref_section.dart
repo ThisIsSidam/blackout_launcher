@@ -11,20 +11,30 @@ class UserPreferencesSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          "User Preferences",
-          style: Theme.of(context)
-              .textTheme
-              .titleSmall!
-              .copyWith(color: Colors.white),
+        Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 16.0,
+          ),
+          child: Text(
+            "User Preferences",
+            style:
+                Theme.of(context).textTheme.titleSmall!.copyWith(fontSize: 12),
+          ),
         ),
         ListTile(
-            title: const Text('Edit favourite apps'),
+            title: Text(
+              'Edit favourite apps',
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
+            trailing: Icon(Icons.chevron_right),
             onTap: () {
               context.go(AppRoute.favourites.path);
             }),
-        _buildIconScaleTile(context)
+        _buildIconScaleTile(context),
+        _buildStatusBarTile(context),
+        _buildNavigationBarTile(context)
       ],
     );
   }
@@ -39,36 +49,34 @@ class UserPreferencesSection extends StatelessWidget {
           Expanded(
             child: Consumer(builder: (context, ref, child) {
               final userSettingsProvider = ref.watch(userSettingProvider);
-              return StatefulBuilder(builder: (context, setState) {
-                final List<double> scaleValues = [34, 40, 46, 52, 58, 64];
-                return Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: List.generate(
-                        scaleValues.length,
-                        (index) => Flexible(
-                              child: TextButton(
-                                onPressed: () {
-                                  userSettingsProvider.iconScale =
-                                      scaleValues[index];
-                                },
-                                child: SizedBox(
-                                  width: scaleValues[index] / 3,
-                                  height: scaleValues[index] / 3,
-                                  child: DecoratedBox(
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: userSettingsProvider.iconScale ==
-                                              scaleValues[index]
-                                          ? Theme.of(context)
-                                              .colorScheme
-                                              .secondary
-                                          : Colors.white,
-                                    ),
+              final List<double> scaleValues = [34, 40, 46, 52, 58, 64];
+              return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: List.generate(
+                      scaleValues.length,
+                      (index) => Flexible(
+                            child: TextButton(
+                              onPressed: () {
+                                userSettingsProvider.iconScale =
+                                    scaleValues[index];
+                              },
+                              child: SizedBox(
+                                width: scaleValues[index] / 3,
+                                height: scaleValues[index] / 3,
+                                child: DecoratedBox(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: userSettingsProvider.iconScale ==
+                                            scaleValues[index]
+                                        ? Theme.of(context)
+                                            .colorScheme
+                                            .secondary
+                                        : Colors.white,
                                   ),
                                 ),
                               ),
-                            )));
-              });
+                            ),
+                          )));
             }),
           ),
           const SizedBox(width: 10),
@@ -76,5 +84,36 @@ class UserPreferencesSection extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Widget _buildStatusBarTile(BuildContext context) {
+    return ListTile(
+        title: Text('Show status bar',
+            style: Theme.of(context).textTheme.titleSmall),
+        trailing: Consumer(builder: (context, ref, child) {
+          final userSetting = ref.watch(userSettingProvider);
+
+          return Switch(
+            value: userSetting.hideStatusBar,
+            onChanged: (val) {
+              userSetting.hideStatusBar = val;
+            },
+          );
+        }));
+  }
+
+  Widget _buildNavigationBarTile(BuildContext context) {
+    return ListTile(
+        title: Text('Show navigation bar',
+            style: Theme.of(context).textTheme.titleSmall),
+        trailing: Consumer(builder: (context, ref, child) {
+          final userSetting = ref.watch(userSettingProvider);
+
+          return Switch(
+              value: userSetting.hideNavigationBar,
+              onChanged: (val) {
+                userSetting.hideNavigationBar = val;
+              });
+        }));
   }
 }
