@@ -94,6 +94,7 @@ class UserPreferencesSection extends StatelessWidget {
           final userSetting = ref.watch(userSettingProvider);
 
           return Switch(
+            activeColor: Theme.of(context).colorScheme.secondary,
             value: userSetting.hideStatusBar,
             onChanged: (val) {
               userSetting.hideStatusBar = val;
@@ -110,6 +111,7 @@ class UserPreferencesSection extends StatelessWidget {
           final userSetting = ref.watch(userSettingProvider);
 
           return Switch(
+              activeColor: Theme.of(context).colorScheme.secondary,
               value: userSetting.hideNavigationBar,
               onChanged: (val) {
                 userSetting.hideNavigationBar = val;

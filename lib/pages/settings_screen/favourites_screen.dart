@@ -1,8 +1,8 @@
 import 'package:blackout_launcher/pages/settings_screen/favourites_provider.dart';
-import 'package:blackout_launcher/provider/apps_provider.dart';
 import 'package:blackout_launcher/shared/app_info_plus.dart';
 import 'package:blackout_launcher/shared/async_widget/async_widget.dart';
 import 'package:blackout_launcher/shared/back_arrow.dart';
+import 'package:blackout_launcher/shared/providers/apps_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

@@ -8,41 +8,38 @@ class NotesSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final List<NoteModal> notes = ref.watch(notesProvider).notes;
-    notes.sort((a, b) => a.compareTo(b));
+    final notesProviderObj = ref.watch(notesProvider);
+    final List<NoteModal> notes = notesProviderObj.notes;
 
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.6,
+      height: MediaQuery.of(context).size.height * 0.9,
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             child: Text(
               'Notes',
               style: Theme.of(context).textTheme.titleMedium,
             ),
           ),
-          Expanded(
-            child: StatefulBuilder(builder: (context, setState) {
-              return ReorderableListView(
-                shrinkWrap: true,
-                children: [
-                  for (NoteModal note in notes) _buildNoteWidget(note, ref),
-                ],
-                onReorder: (int oldIndex, int newIndex) {
-                  if (oldIndex < newIndex) {
-                    newIndex -= 1;
-                  }
-                  final NoteModal item = notes.removeAt(oldIndex);
-                  notes.insert(newIndex, item);
-                  ref.read(notesProvider).updateNotes(notes);
-                  setState(() {});
-                },
-              );
-            }),
-          ),
-          _buildNewNoteButton(ref)
+          Flexible(
+              child: ReorderableListView(
+            shrinkWrap: true,
+            onReorder: (int oldIndex, int newIndex) {
+              if (oldIndex < newIndex) {
+                newIndex -= 1;
+              }
+              final NoteModal item = notes.removeAt(oldIndex);
+              notes.insert(newIndex, item);
+              notesProviderObj.updateNotes(notes);
+            },
+            footer: _buildNewNoteButton(context, ref),
+            children: [
+              for (NoteModal note in notes) _buildNoteWidget(note, ref),
+            ],
+          )),
         ],
       ),
     );
@@ -64,8 +61,6 @@ class NotesSection extends ConsumerWidget {
       child: TextField(
         controller: controller,
         decoration: null,
-        // expands: true,
-        // minLines: null,
         maxLines: null,
         onChanged: (_) {
           note.text = controller.text;
@@ -75,13 +70,13 @@ class NotesSection extends ConsumerWidget {
     );
   }
 
-  Widget _buildNewNoteButton(WidgetRef ref) {
+  Widget _buildNewNoteButton(BuildContext context, WidgetRef ref) {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
-          style: OutlinedButton.styleFrom(
+          style: ElevatedButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.secondary,
               shape: RoundedRectangleBorder(
-                  side: const BorderSide(color: Colors.black26),
                   borderRadius: BorderRadius.circular(8))),
           onPressed: () {
             ref.read(notesProvider).addNewNote();

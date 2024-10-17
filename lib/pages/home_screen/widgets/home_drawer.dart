@@ -7,17 +7,12 @@ class HomeDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Drawer(
-      child: Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: 8, 
-          vertical: 16
-        ),
-        child: Column(
-          children: [
-            NotesSection()
-          ],
-        ),
-      )
-    );
+        child: Padding(
+      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [NotesSection()],
+      ),
+    ));
   }
 }

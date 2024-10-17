@@ -29,4 +29,8 @@ class NotesDB {
     }
     await _box.put(_noteKey, notes);
   }
+
+  static Future<void> clearNotes() async {
+    await _box.put(_noteKey, []);
+  }
 }
