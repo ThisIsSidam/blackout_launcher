@@ -2,6 +2,8 @@ import 'package:blackout_launcher/database/user_settings_db.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../constants/enums/swipe_gestures.dart';
+
 class SettingsNotifier extends ChangeNotifier {
   double get iconScale {
     final dynamic value = UserSettingsDB.getUserSetting('iconScale');
@@ -40,6 +42,60 @@ class SettingsNotifier extends ChangeNotifier {
 
   set hideNavigationBar(bool value) {
     UserSettingsDB.setUserSetting('hideNavigationBar', value);
+    notifyListeners();
+  }
+
+  SwipeGesture get rightSwipeGestureAction {
+    final dynamic value =
+        UserSettingsDB.getUserSetting('rightSwipeGestureAction');
+    if (value == null || value is! String) {
+      return SwipeGesture.openDrawer;
+    }
+    return SwipeGesture.fromString(value);
+  }
+
+  set rightSwipeGestureAction(SwipeGesture value) {
+    UserSettingsDB.setUserSetting('rightSwipeGestureAction', value.toString());
+    notifyListeners();
+  }
+
+  SwipeGesture get leftSwipeGestureAction {
+    final dynamic value =
+        UserSettingsDB.getUserSetting('leftSwipeGestureAction');
+    if (value == null || value is! String) {
+      return SwipeGesture.none;
+    }
+    return SwipeGesture.fromString(value);
+  }
+
+  set leftSwipeGestureAction(SwipeGesture value) {
+    UserSettingsDB.setUserSetting('leftSwipeGestureAction', value.toString());
+    notifyListeners();
+  }
+
+  String get rightSwipeOpenApp {
+    final dynamic value = UserSettingsDB.getUserSetting('rightSwipeOpenApp');
+    if (value == null || value is! String) {
+      return 'none';
+    }
+    return value;
+  }
+
+  set rightSwipeOpenApp(String packageName) {
+    UserSettingsDB.setUserSetting('rightSwipeOpenApp', packageName);
+    notifyListeners();
+  }
+
+  String get leftSwipeOpenApp {
+    final dynamic value = UserSettingsDB.getUserSetting('leftSwipeOpenApp');
+    if (value == null || value is! String) {
+      return 'none';
+    }
+    return value;
+  }
+
+  set leftSwipeOpenApp(String packageName) {
+    UserSettingsDB.setUserSetting('leftSwipeOpenApp', packageName);
     notifyListeners();
   }
 }

@@ -1,3 +1,4 @@
+import 'package:blackout_launcher/pages/settings_screen/shortcuts_section/shortcuts_section.dart';
 import 'package:blackout_launcher/pages/settings_screen/user_preferences_section/user_pref_section.dart';
 import 'package:blackout_launcher/shared/back_arrow.dart';
 import 'package:flutter/material.dart';
@@ -16,13 +17,26 @@ class SettingsScreen extends StatelessWidget {
         body: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const SingleChildScrollView(
+            SingleChildScrollView(
                 child: Column(
-              children: [UserPreferencesSection()],
+              children: [
+                UserPreferencesSection(),
+                _buildDivider(context),
+                ShortcutsSection(),
+              ],
             )),
             _buildVersionWidget(),
           ],
         ));
+  }
+
+  Widget _buildDivider(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Divider(
+        color: Theme.of(context).colorScheme.onSurface,
+      ),
+    );
   }
 
   Widget _buildVersionWidget() {

@@ -48,32 +48,35 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           } else {}
         }
       },
-      child: Scaffold(
-        key: _scaffoldKey,
-        backgroundColor: Colors.transparent,
-        drawer: const HomeDrawer(),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: AsyncValueWidget<List<AppInfo>>(
-            value: ref.watch(appListProvider),
-            data: (data) {
-              List<AppInfo> apps = data;
+      child: PopScope(
+        canPop: false,
+        child: Scaffold(
+          key: _scaffoldKey,
+          backgroundColor: Colors.transparent,
+          drawer: const HomeDrawer(),
+          body: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: AsyncValueWidget<List<AppInfo>>(
+              value: ref.watch(appListProvider),
+              data: (data) {
+                List<AppInfo> apps = data;
 
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  if (_controller.text.isEmpty) ...<Widget>[
-                    const Flexible(child: ClockWidget()),
-                    const Spacer(),
-                  ] else
-                    Flexible(
-                      child: _buildListOfApps(apps, userSettings),
-                    ),
-                  _buildFavouritesRow(apps, userSettings),
-                  _buildBottomSearchBar(),
-                ],
-              );
-            },
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    if (_controller.text.isEmpty) ...<Widget>[
+                      const Flexible(child: ClockWidget()),
+                      const Spacer(),
+                    ] else
+                      Flexible(
+                        child: _buildListOfApps(apps, userSettings),
+                      ),
+                    _buildFavouritesRow(apps, userSettings),
+                    _buildBottomSearchBar(),
+                  ],
+                );
+              },
+            ),
           ),
         ),
       ),
