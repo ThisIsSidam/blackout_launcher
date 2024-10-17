@@ -41,7 +41,6 @@ dependencies:
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   riverpod: ^2.5.1
-  android_intent_plus: ^5.1.0
   hooks_riverpod: ^2.5.2
   fluttertoast: ^8.2.8
   flutter_riverpod: ^2.5.3
