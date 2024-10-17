@@ -20,9 +20,9 @@ class SettingsScreen extends StatelessWidget {
             SingleChildScrollView(
                 child: Column(
               children: [
-                UserPreferencesSection(),
+                const UserPreferencesSection(),
                 _buildDivider(context),
-                ShortcutsSection(),
+                const ShortcutsSection(),
               ],
             )),
             _buildVersionWidget(),

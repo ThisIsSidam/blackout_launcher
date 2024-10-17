@@ -53,13 +53,13 @@ class ShortcutsSection extends StatelessWidget {
         },
         menuChildren: [
           MenuItemButton(
-            child: Text('Open Drawer'),
+            child: const Text('Open Drawer'),
             onPressed: () {
               userSettings.rightSwipeGestureAction = SwipeGesture.openDrawer;
             },
           ),
           MenuItemButton(
-            child: Text('Open app'),
+            child: const Text('Open app'),
             onPressed: () async {
               final AppInfo? selectedApp = await showDialog<AppInfo>(
                 context: context,
@@ -74,7 +74,7 @@ class ShortcutsSection extends StatelessWidget {
             },
           ),
           MenuItemButton(
-            child: Text('None'),
+            child: const Text('None'),
             onPressed: () {
               userSettings.rightSwipeGestureAction = SwipeGesture.none;
             },
@@ -107,13 +107,7 @@ class ShortcutsSection extends StatelessWidget {
         },
         menuChildren: [
           MenuItemButton(
-            child: Text('Open Drawer'),
-            onPressed: () {
-              userSettings.leftSwipeGestureAction = SwipeGesture.openDrawer;
-            },
-          ),
-          MenuItemButton(
-            child: Text('Open app'),
+            child: const Text('Open app'),
             onPressed: () async {
               final AppInfo? selectedApp = await showDialog<AppInfo>(
                 context: context,
@@ -128,7 +122,7 @@ class ShortcutsSection extends StatelessWidget {
             },
           ),
           MenuItemButton(
-            child: Text('None'),
+            child: const Text('None'),
             onPressed: () {
               userSettings.leftSwipeGestureAction = SwipeGesture.none;
             },

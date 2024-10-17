@@ -1,3 +1,4 @@
+import 'package:blackout_launcher/constants/enums/swipe_gestures.dart';
 import 'package:blackout_launcher/pages/home_screen/widgets/app_launcher/app_launcher.dart';
 import 'package:blackout_launcher/pages/home_screen/widgets/clock.dart';
 import 'package:blackout_launcher/pages/home_screen/widgets/home_drawer.dart';
@@ -10,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:installed_apps/app_info.dart';
+import 'package:installed_apps/installed_apps.dart';
 
 import '../../router/app_router.dart';
 
@@ -29,21 +31,30 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     super.initState();
   }
 
+  void _performSwipeAction(SwipeGesture swipeGesture, {bool isRight = true}) {
+    if (swipeGesture == SwipeGesture.openDrawer) {
+      _scaffoldKey.currentState!.openDrawer();
+    } else if (swipeGesture == SwipeGesture.openApp) {
+      final appPackageName = isRight
+          ? ref.read(userSettingProvider).rightSwipeOpenApp
+          : ref.read(userSettingProvider).leftSwipeOpenApp;
+      if (appPackageName != 'none') {
+        InstalledApps.startApp(appPackageName);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final userSettings = ref.watch(userSettingProvider);
     return SwipeDetector(
       onSwipeRight: () {
-        _scaffoldKey.currentState!.openDrawer();
+        _performSwipeAction(userSettings.rightSwipeGestureAction,
+            isRight: true);
       },
       onSwipeLeft: () {
-        print('left');
-      },
-      onSwipeUpwards: () {
-        print('up');
-      },
-      onSwipeDownwards: () {
-        print('down');
+        _performSwipeAction(userSettings.leftSwipeGestureAction,
+            isRight: false);
       },
       child: PopScope(
         canPop: false,

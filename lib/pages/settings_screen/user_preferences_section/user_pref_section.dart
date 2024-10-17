@@ -28,7 +28,7 @@ class UserPreferencesSection extends StatelessWidget {
               'Edit favourite apps',
               style: Theme.of(context).textTheme.titleSmall,
             ),
-            trailing: Icon(Icons.chevron_right),
+            trailing: const Icon(Icons.chevron_right),
             onTap: () {
               context.go(AppRoute.favourites.path);
             }),
