@@ -52,24 +52,23 @@ class SearchScreen extends ConsumerWidget {
           color: Colors.white10,
           borderRadius: BorderRadius.circular(25),
         ),
-        child: Center(
-          child: TextField(
-            focusNode: focusNode,
-            style: Theme.of(context).textTheme.bodyMedium,
-            decoration: const InputDecoration(
-              isDense: true, // This helps reduce the overall height
-              contentPadding: EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical:
-                    8, // Adjust this value to fine-tune vertical alignment
-              ),
-              prefixIcon: Icon(Icons.search),
-              border: InputBorder.none,
+        child: TextField(
+          textAlignVertical: TextAlignVertical.center,
+          textCapitalization: TextCapitalization.sentences,
+          focusNode: focusNode,
+          style: Theme.of(context).textTheme.bodyMedium,
+          decoration: const InputDecoration(
+            isCollapsed: true,
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 8, // Adjust this value to fine-tune vertical alignment
             ),
-            onChanged: (value) {
-              queryProvider.setQuery(value);
-            },
+            prefixIcon: Icon(Icons.search),
+            border: InputBorder.none,
           ),
+          onChanged: (value) {
+            queryProvider.setQuery(value);
+          },
         ),
       ),
     );

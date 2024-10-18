@@ -7,7 +7,7 @@ class SearchQueryNotifier extends ChangeNotifier {
   String get query => _query;
 
   void setQuery(String query) {
-    this._query = query;
+    _query = query;
     notifyListeners();
   }
 }

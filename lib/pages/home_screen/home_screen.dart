@@ -74,9 +74,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    const Spacer(),
-                    const ClockWidget(),
-                    const Spacer(),
+                    const Expanded(child: ClockWidget()),
                     _buildFavouritesRow(apps, userSettings),
                     _buildBottomSearchBar(),
                   ],
