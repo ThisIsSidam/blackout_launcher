@@ -74,7 +74,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    ClockWidget(),
+                    const Spacer(),
+                    const ClockWidget(),
                     const Spacer(),
                     _buildFavouritesRow(apps, userSettings),
                     _buildBottomSearchBar(),
@@ -95,7 +96,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         borderRadius: BorderRadius.circular(25),
       ),
       child: ListTile(
-        minTileHeight: 40,
         contentPadding: EdgeInsets.zero,
         leading: IconButton(
           onPressed: () {
