@@ -22,7 +22,9 @@ class AppListAsyncNotifier extends AsyncNotifier<List<AppInfo>> {
   }
 
   Future<List<AppInfo>> _fetchApps() async {
-    return await InstalledApps.getInstalledApps(true, true);
+    //TODO: Check if installed_apps new release is out or not and move to it
+    // Currently using direct github link from the person who sent the PR.
+    return await InstalledApps.getInstalledApps(false, true, "", true);
   }
 
   Future<void> reloadApps() async {
