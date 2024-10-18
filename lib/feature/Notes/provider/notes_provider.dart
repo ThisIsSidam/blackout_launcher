@@ -6,9 +6,29 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 class NotesNotifier extends ChangeNotifier {
   List<NoteModal> notes = NotesDB.getNotes();
 
-  void addNewNote() {
+  // Add a map to store FocusNodes
+  final Map<int, FocusNode> focusNodes = {};
+
+  // Add method to get or create FocusNode
+  FocusNode getFocusNode(int noteId) {
+    if (!focusNodes.containsKey(noteId)) {
+      focusNodes[noteId] = FocusNode();
+    }
+    return focusNodes[noteId]!;
+  }
+
+  @override
+  void dispose() {
+    // Clean up FocusNodes
+    for (final focusNode in focusNodes.values) {
+      focusNode.dispose();
+    }
+    super.dispose();
+  }
+
+  void addNewNote(String text) {
     final NoteModal note =
-        NoteModal(id: DateTime.now().microsecondsSinceEpoch, text: '');
+        NoteModal(id: DateTime.now().microsecondsSinceEpoch, text: text);
     notes.insert(0, note);
     notifyListeners();
 
