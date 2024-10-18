@@ -14,7 +14,7 @@ class NotesSection extends ConsumerWidget {
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.9,
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
@@ -72,16 +72,20 @@ class NotesSection extends ConsumerWidget {
 
   Widget _buildNewNoteButton(BuildContext context, WidgetRef ref) {
     return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.secondary,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8))),
-          onPressed: () {
-            ref.read(notesProvider).addNewNote();
-          },
-          child: const Icon(Icons.add)),
-    );
+        width: double.infinity,
+        child: ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8))),
+            onPressed: () {
+              ref.read(notesProvider).addNewNote();
+            },
+            icon: Icon(
+              Icons.add,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
+            label: Text('Add Note',
+                style: Theme.of(context).textTheme.titleSmall)));
   }
 }

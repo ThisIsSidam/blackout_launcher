@@ -10,8 +10,8 @@ class HomeDrawer extends StatelessWidget {
         child: Padding(
       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [NotesSection()],
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [SizedBox(height: 16), NotesSection()],
       ),
     ));
   }
