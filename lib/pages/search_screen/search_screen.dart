@@ -1,14 +1,11 @@
-import 'dart:ui';
-
+import 'package:blackout_launcher/pages/home_screen/widgets/swipe_detector.dart';
 import 'package:blackout_launcher/pages/search_screen/providers/search_query_provider.dart';
 import 'package:blackout_launcher/shared/async_widget/async_widget.dart';
 import 'package:blackout_launcher/shared/providers/apps_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:installed_apps/app_info.dart';
 
-import '../../router/app_router.dart';
 import '../../shared/providers/user_settings_provider.dart';
 import '../home_screen/widgets/app_launcher/app_launcher.dart';
 
@@ -18,45 +15,63 @@ class SearchScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final settings = ref.watch(userSettingProvider);
-    return Scaffold(
-        backgroundColor: Colors.black87,
-        appBar: AppBar(
-            backgroundColor: Colors.black87,
-            automaticallyImplyLeading: false,
-            title: _buildSearchBar(context, ref)),
-        body: AsyncValueWidget(
-            value: ref.watch(appListProvider),
-            data: (apps) {
-              return _buildListOfApps(apps, settings, ref);
-            }));
+    final focusNode = FocusNode();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      focusNode.requestFocus();
+    });
+    return SwipeDetector(
+      onSwipeDownwards: () {
+        Navigator.pop(context);
+      },
+      child: Scaffold(
+          body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+              automaticallyImplyLeading: false,
+              title: _buildSearchBar(context, ref, focusNode)),
+          SliverFillRemaining(
+              child: AsyncValueWidget(
+                  value: ref.watch(appListProvider),
+                  data: (apps) {
+                    return _buildListOfApps(apps, settings, ref);
+                  })),
+        ],
+      )),
+    );
   }
 
-  Widget _buildSearchBar(BuildContext context, WidgetRef ref) {
+  Widget _buildSearchBar(
+      BuildContext context, WidgetRef ref, FocusNode focusNode) {
     final queryProvider = ref.read(searchQueryProvider);
-    return SizedBox(
-      height: 30,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: Colors.grey,
-          borderRadius: BorderRadius.circular(25),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.only(left: 16.0),
-          child: TextField(
-              selectionHeightStyle: BoxHeightStyle.tight,
-              style: Theme.of(context).textTheme.bodySmall,
-              decoration: InputDecoration(
-                contentPadding: EdgeInsets.zero,
+    return Padding(
+      padding: const EdgeInsets.only(top: 16.0),
+      child: SizedBox(
+        height: 40,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: Colors.white10,
+            borderRadius: BorderRadius.circular(25),
+          ),
+          child: Center(
+            child: TextField(
+              focusNode: focusNode,
+              style: Theme.of(context).textTheme.bodyMedium,
+              decoration: const InputDecoration(
+                isDense: true, // This helps reduce the overall height
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical:
+                      8, // Adjust this value to fine-tune vertical alignment
+                ),
+                prefixIcon: Icon(Icons.search),
                 border: InputBorder.none,
-                suffixIcon: IconButton(
-                    icon: const Icon(Icons.menu),
-                    onPressed: () {
-                      context.go(AppRoute.settings.path);
-                    }),
               ),
               onChanged: (value) {
                 queryProvider.setQuery(value);
-              }),
+              },
+            ),
+          ),
         ),
       ),
     );
@@ -65,19 +80,19 @@ class SearchScreen extends ConsumerWidget {
   Widget _buildListOfApps(
       List<AppInfo> apps, SettingsNotifier settings, WidgetRef ref) {
     final queryProvider = ref.watch(searchQueryProvider);
-    return SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: GridView.count(
+        crossAxisCount: 5,
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 16,
         children: [
-          for (var app in apps
-              .where((app) => app.name
-                  .toLowerCase()
-                  .contains(queryProvider.query.toLowerCase()))
-              .take(5))
+          for (var app in apps.where((app) => app.name
+              .toLowerCase()
+              .contains(queryProvider.query.toLowerCase())))
             AppLauncher(
               app: app,
-              launcherType: LauncherType.tile,
+              launcherType: LauncherType.iconAndText,
               iconSize: settings.iconScale,
             ),
         ],

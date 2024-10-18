@@ -46,17 +46,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final userSettings = ref.watch(userSettingProvider);
-    return SwipeDetector(
-      onSwipeRight: () {
-        _performSwipeAction(userSettings.rightSwipeGestureAction,
-            isRight: true);
-      },
-      onSwipeLeft: () {
-        _performSwipeAction(userSettings.leftSwipeGestureAction,
-            isRight: false);
-      },
-      child: PopScope(
-        canPop: false,
+    return PopScope(
+      canPop: false,
+      child: SwipeDetector(
+        onSwipeRight: () {
+          _performSwipeAction(userSettings.rightSwipeGestureAction,
+              isRight: true);
+        },
+        onSwipeLeft: () {
+          _performSwipeAction(userSettings.leftSwipeGestureAction,
+              isRight: false);
+        },
+        onSwipeUpwards: () {
+          context.go(AppRoute.search.path);
+        },
         child: Scaffold(
           key: _scaffoldKey,
           backgroundColor: Colors.transparent,
@@ -86,24 +89,29 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Widget _buildBottomSearchBar() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: SearchBar(
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: Colors.white10,
+        borderRadius: BorderRadius.circular(25),
+      ),
+      child: ListTile(
+        minTileHeight: 40,
+        contentPadding: EdgeInsets.zero,
+        leading: IconButton(
+          onPressed: () {
+            context.go(AppRoute.search.path);
+          },
+          icon: Icon(Icons.search),
+        ),
         onTap: () {
           context.go(AppRoute.search.path);
         },
-        trailing: [
-          IconButton(
-              icon: const Icon(Icons.menu),
-              onPressed: () {
-                context.go(AppRoute.settings.path);
-              }),
-        ],
-        padding: const WidgetStatePropertyAll(
-            EdgeInsets.symmetric(vertical: 0, horizontal: 12)),
-        onChanged: (value) {
-          setState(() {});
-        },
+        trailing: IconButton(
+          onPressed: () {
+            context.go(AppRoute.settings.path);
+          },
+          icon: Icon(Icons.menu),
+        ),
       ),
     );
   }
