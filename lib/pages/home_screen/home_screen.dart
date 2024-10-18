@@ -1,9 +1,9 @@
 import 'package:blackout_launcher/constants/enums/swipe_gestures.dart';
+import 'package:blackout_launcher/pages/favourite_screen/providers/favourites_provider.dart';
 import 'package:blackout_launcher/pages/home_screen/widgets/app_launcher/app_launcher.dart';
 import 'package:blackout_launcher/pages/home_screen/widgets/clock.dart';
 import 'package:blackout_launcher/pages/home_screen/widgets/home_drawer.dart';
 import 'package:blackout_launcher/pages/home_screen/widgets/swipe_detector.dart';
-import 'package:blackout_launcher/pages/settings_screen/favourites_provider.dart';
 import 'package:blackout_launcher/shared/async_widget/async_widget.dart';
 import 'package:blackout_launcher/shared/providers/apps_provider.dart';
 import 'package:blackout_launcher/shared/providers/user_settings_provider.dart';
