@@ -23,7 +23,6 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  final TextEditingController _controller = TextEditingController();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -72,13 +71,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    if (_controller.text.isEmpty) ...<Widget>[
-                      const Flexible(child: ClockWidget()),
-                      const Spacer(),
-                    ] else
-                      Flexible(
-                        child: _buildListOfApps(apps, userSettings),
-                      ),
+                    const Flexible(child: ClockWidget()),
+                    const Spacer(),
                     _buildFavouritesRow(apps, userSettings),
                     _buildBottomSearchBar(),
                   ],
@@ -91,32 +85,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _buildListOfApps(List<AppInfo> apps, SettingsNotifier settings) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          for (var app in apps
-              .where((app) => app.name
-                  .toLowerCase()
-                  .contains(_controller.text.toLowerCase()))
-              .take(5))
-            AppLauncher(
-              app: app,
-              launcherType: LauncherType.tile,
-              iconSize: settings.iconScale,
-            ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildBottomSearchBar() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: SearchBar(
-        controller: _controller,
+        onTap: () {
+          context.go(AppRoute.search.path);
+        },
         trailing: [
           IconButton(
               icon: const Icon(Icons.menu),
