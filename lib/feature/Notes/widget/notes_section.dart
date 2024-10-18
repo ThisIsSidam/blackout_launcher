@@ -1,6 +1,5 @@
 import 'package:blackout_launcher/feature/Notes/modal/notes_modal.dart';
 import 'package:blackout_launcher/feature/Notes/provider/notes_provider.dart';
-import 'package:blackout_launcher/feature/Notes/widget/edit_panel.dart';
 import 'package:blackout_launcher/feature/Notes/widget/note_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -28,6 +27,13 @@ class NotesSection extends HookConsumerWidget {
           ),
           Flexible(
               child: ReorderableListView(
+            // To hide the child margins when reordering
+            proxyDecorator: (child, index, animation) {
+              return Material(
+                type: MaterialType.transparency,
+                child: child,
+              );
+            },
             shrinkWrap: true,
             onReorder: (int oldIndex, int newIndex) {
               if (oldIndex < newIndex) {
@@ -37,7 +43,7 @@ class NotesSection extends HookConsumerWidget {
               notes.insert(newIndex, item);
               notesProviderObj.updateNotes(notes);
             },
-            footer: _NewNoteField(),
+            footer: _buildNewNoteButton(context, ref),
             children: [
               for (NoteModal note in notes)
                 _buildNoteWidget(note, notesProviderObj)
@@ -55,84 +61,23 @@ class NotesSection extends HookConsumerWidget {
       focusNode: notesNotif.getFocusNode(note.id),
     );
   }
-}
 
-class _NewNoteField extends ConsumerStatefulWidget {
-  const _NewNoteField();
-
-  @override
-  ConsumerState<_NewNoteField> createState() => _NewNoteFieldState();
-}
-
-class _NewNoteFieldState extends ConsumerState<_NewNoteField> {
-  final TextEditingController controller = TextEditingController();
-  final FocusNode focusNode = FocusNode();
-  bool hasFocus = false;
-
-  @override
-  void initState() {
-    super.initState();
-    focusNode.addListener(_onFocusChange);
-  }
-
-  void _onFocusChange() {
-    setState(() {
-      hasFocus = focusNode.hasFocus;
-    });
-  }
-
-  @override
-  void dispose() {
-    controller.dispose();
-    focusNode.dispose();
-    super.dispose();
-  }
-
-  void _saveNote() {
-    final text = controller.text;
-    if (text.isNotEmpty) {
-      ref.read(notesProvider).addNewNote(text);
-      controller.clear();
-      focusNode.unfocus();
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: Colors.black26,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          margin: const EdgeInsets.symmetric(vertical: 4),
-          child: TextField(
-            controller: controller,
-            focusNode: focusNode,
-            textCapitalization: TextCapitalization.sentences,
-            decoration: const InputDecoration(
-              hintText: 'Write a new note',
-              hintStyle: TextStyle(color: Colors.grey),
-              border: InputBorder.none,
+  Widget _buildNewNoteButton(BuildContext context, WidgetRef ref) {
+    return SizedBox(
+        width: double.infinity,
+        child: ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8))),
+            onPressed: () {
+              ref.read(notesProvider).addNewNote('');
+            },
+            icon: Icon(
+              Icons.add,
+              color: Theme.of(context).colorScheme.onPrimary,
             ),
-            maxLines: null,
-          ),
-        ),
-        if (hasFocus)
-          Row(
-            children: [
-              const EditPanel(),
-              const Spacer(),
-              TextButton(
-                onPressed: _saveNote,
-                child: const Text('Save'),
-              ),
-            ],
-          ),
-      ],
-    );
+            label: Text('Add Note',
+                style: Theme.of(context).textTheme.titleSmall)));
   }
 }

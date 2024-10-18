@@ -59,6 +59,7 @@ class _NoteWidgetState extends ConsumerState<NoteWidget> {
             borderRadius: BorderRadius.circular(8),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 12),
+          margin: const EdgeInsets.symmetric(vertical: 4),
           child: TextField(
             controller: controller,
             focusNode: focusNode,
