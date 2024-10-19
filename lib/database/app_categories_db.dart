@@ -28,4 +28,14 @@ class AppCategoriesDB {
     apps.remove(packageName);
     await _box.put(category, apps);
   }
+
+  static List<String> getHiddenApps() {
+    return _box.get('hidden_apps')?.cast<String>() ?? <String>[];
+  }
+
+  static Future<void> hideApp(String packageName) {
+    final hiddenApps = getHiddenApps();
+    hiddenApps.add(packageName);
+    return _box.put('hidden_apps', hiddenApps);
+  }
 }

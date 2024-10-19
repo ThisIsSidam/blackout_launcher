@@ -1,5 +1,6 @@
 import 'package:blackout_launcher/pages/favourite_screen/providers/favourites_provider.dart';
 import 'package:blackout_launcher/shared/app_info_plus.dart';
+import 'package:blackout_launcher/shared/providers/apps_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:installed_apps/app_info.dart';
@@ -32,12 +33,18 @@ class AppLauncher extends ConsumerWidget {
         menuChildren: [
           _buildFavouriteButton(ref, isFavourite),
           MenuItemButton(
+              leadingIcon: const Icon(Icons.hide_source),
+              child: const Text('Hide App'),
+              onPressed: () async {
+                ref.read(appListProvider.notifier).hideApp(app.packageName);
+              }),
+          MenuItemButton(
             leadingIcon: const Icon(Icons.info_outline),
             child: const Text('App Info'),
             onPressed: () async {
-              InstalledApps.openSettings(app.packageName);
+              await InstalledApps.openSettings(app.packageName);
             },
-          )
+          ),
         ],
         builder: (context, controller, child) {
           late Widget child;

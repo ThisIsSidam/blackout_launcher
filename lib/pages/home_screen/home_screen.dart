@@ -133,11 +133,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               vertical: 8, // Adjust this value to fine-tune vertical alignment
             ),
             prefixIcon: const Icon(Icons.search),
-            suffixIcon: IconButton(
-              onPressed: () {
-                context.go(AppRoute.settings.path);
-              },
-              icon: const Icon(Icons.menu),
+            suffixIcon: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                IconButton(
+                    onPressed: () {
+                      controller.clear();
+                      queryProvider.clearQuery();
+                      focusNode.unfocus();
+                    },
+                    icon: const Icon(Icons.cancel)),
+                IconButton(
+                  onPressed: () {
+                    context.go(AppRoute.settings.path);
+                  },
+                  icon: const Icon(Icons.menu),
+                ),
+              ],
             ),
             border: InputBorder.none,
           ),
@@ -146,7 +158,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           },
           onTapOutside: (_) {
             controller.clear();
-            queryProvider.clearQuery();
             focusNode.unfocus();
           },
         ),
@@ -154,8 +165,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _buildListOfApps(List<AppInfo> apps, SettingsNotifier settings) {
+  Widget _buildListOfApps(List<AppInfo> allApps, SettingsNotifier settings) {
     final queryProvider = ref.watch(searchQueryProvider);
+    final hiddenApps =
+        ref.read(appListProvider.notifier).getHiddenAppPackageNames();
+    final apps = allApps.where((app) => !hiddenApps.contains(app.packageName));
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: GridView.count(

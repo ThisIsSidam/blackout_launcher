@@ -1,4 +1,4 @@
-import 'package:blackout_launcher/database/user_pref_db.dart';
+import 'package:blackout_launcher/database/app_categories_db.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
