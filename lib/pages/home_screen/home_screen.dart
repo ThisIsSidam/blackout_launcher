@@ -77,9 +77,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         onSwipeLeft: () {
           _performSwipeAction(settings.leftSwipeGestureAction, isRight: false);
         },
-        onSwipeUpwards: () {
-          ref.read(searchQueryProvider).clearQuery();
-          context.go(AppRoute.search.path);
+        onSwipeDownwards: () {
+          focusNode.requestFocus();
         },
         child: Scaffold(
             key: _scaffoldKey,
@@ -112,6 +111,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   Widget _buildSearchBar(BuildContext context) {
     final queryProvider = ref.read(searchQueryProvider);
+    final controller = TextEditingController();
+
     return Padding(
       padding: const EdgeInsets.only(top: 16.0),
       child: DecoratedBox(
@@ -123,6 +124,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           textAlignVertical: TextAlignVertical.center,
           textCapitalization: TextCapitalization.sentences,
           focusNode: focusNode,
+          controller: controller,
           style: Theme.of(context).textTheme.bodyMedium,
           decoration: InputDecoration(
             isCollapsed: true,
@@ -141,6 +143,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
           onChanged: (value) {
             queryProvider.setQuery(value);
+          },
+          onTapOutside: (_) {
+            controller.clear();
+            queryProvider.clearQuery();
+            focusNode.unfocus();
           },
         ),
       ),
