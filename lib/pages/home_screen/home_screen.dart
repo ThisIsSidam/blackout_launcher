@@ -12,6 +12,7 @@ import 'package:installed_apps/installed_apps.dart';
 
 import '../../constants/enums/swipe_gestures.dart';
 import '../../shared/providers/user_settings_provider.dart';
+import '../favourite_screen/providers/favourites_provider.dart';
 import 'widgets/app_launcher/app_launcher.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -77,34 +78,33 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         onSwipeDownwards: () {
           focusNode.requestFocus();
         },
-        child: Scaffold(
-          key: _scaffoldKey,
-          resizeToAvoidBottomInset: true,
-          drawer: const HomeDrawer(),
-          body: CustomScrollView(
-            slivers: [
-              SliverAppBar(
-                toolbarHeight: 65,
-                automaticallyImplyLeading: false,
-                title:
-                    CustomSearchBar(focusNode: focusNode, isFocused: isFocused),
-              ),
-              SliverFillRemaining(
-                child: AsyncValueWidget(
-                  value: ref.watch(appListProvider),
-                  data: (apps) {
-                    return queryProvider.isEmpty
-                        ? ClockWidget()
-                        : _buildListOfApps(
-                            apps,
-                            settings,
-                          );
-                  },
+        child: AsyncValueWidget(
+            value: ref.watch(appListProvider),
+            data: (apps) {
+              return Scaffold(
+                key: _scaffoldKey,
+                resizeToAvoidBottomInset: true,
+                drawer: const HomeDrawer(),
+                body: CustomScrollView(
+                  slivers: [
+                    SliverAppBar(
+                      toolbarHeight: 65,
+                      automaticallyImplyLeading: false,
+                      title: CustomSearchBar(
+                          focusNode: focusNode, isFocused: isFocused),
+                    ),
+                    SliverFillRemaining(
+                        child: queryProvider.isEmpty
+                            ? ClockWidget()
+                            : _buildListOfApps(
+                                apps,
+                                settings,
+                              )),
+                  ],
                 ),
-              ),
-            ],
-          ),
-        ),
+                bottomSheet: _buildFavouritesRow(apps, settings),
+              );
+            }),
       ),
     );
   }
@@ -132,5 +132,38 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ],
       ),
     );
+  }
+
+  Widget _buildFavouritesRow(List<AppInfo> apps, SettingsNotifier settings) {
+    return BottomSheet(
+        enableDrag: false,
+        shadowColor: Colors.black,
+        backgroundColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
+        ),
+        onClosing: () {},
+        builder: (context) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            child: Consumer(builder: (context, ref, child) {
+              List<String> favourites =
+                  ref.watch(favouritesProvider).favourites;
+              List<AppInfo> favouriteApps = apps
+                  .where((app) => favourites.contains(app.packageName))
+                  .toList();
+              return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    for (final app in favouriteApps)
+                      AppLauncher(
+                        app: app,
+                        launcherType: LauncherType.iconOnly,
+                        iconSize: settings.iconScale,
+                      ),
+                  ]);
+            }),
+          );
+        });
   }
 }
