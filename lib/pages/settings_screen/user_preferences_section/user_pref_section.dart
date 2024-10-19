@@ -24,7 +24,7 @@ class UserPreferencesSection extends StatelessWidget {
           ),
         ),
         ListTile(
-            leading: Icon(Icons.favorite),
+            leading: const Icon(Icons.favorite),
             title: Text(
               'Edit favourite apps',
               style: Theme.of(context).textTheme.titleSmall,
@@ -32,6 +32,16 @@ class UserPreferencesSection extends StatelessWidget {
             trailing: const Icon(Icons.chevron_right),
             onTap: () {
               context.go(AppRoute.favourites.path);
+            }),
+        ListTile(
+            leading: const Icon(Icons.block),
+            title: Text(
+              'Edit Hidden Apps',
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () {
+              context.go(AppRoute.hidden.path);
             }),
         _buildIconScaleTile(context),
         _buildStatusBarTile(context),
@@ -42,8 +52,8 @@ class UserPreferencesSection extends StatelessWidget {
 
   Widget _buildIconScaleTile(BuildContext context) {
     return ListTile(
-      leading:
-          Icon(Icons.signal_cellular_4_bar_sharp, color: Colors.transparent),
+      leading: const Icon(Icons.signal_cellular_4_bar_sharp,
+          color: Colors.transparent),
       title: Text('Icon Size', style: Theme.of(context).textTheme.titleSmall),
       subtitle: Row(
         children: [

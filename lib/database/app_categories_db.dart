@@ -38,4 +38,12 @@ class AppCategoriesDB {
     hiddenApps.add(packageName);
     return _box.put('hidden_apps', hiddenApps);
   }
+
+  static removeHiddenApp(String packageName) {
+    final hiddenApps = getHiddenApps();
+    if (hiddenApps.contains(packageName)) {
+      hiddenApps.remove(packageName);
+      _box.put('hidden_apps', hiddenApps);
+    }
+  }
 }

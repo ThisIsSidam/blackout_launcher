@@ -1,4 +1,5 @@
 import 'package:blackout_launcher/pages/favourite_screen/favourites_screen.dart';
+import 'package:blackout_launcher/pages/hidden_apps_screen/hidden_apps_screen.dart';
 import 'package:blackout_launcher/pages/settings_screen/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -9,8 +10,7 @@ enum AppRoute {
   home('/', 'HOME'),
   settings('/settings', 'SETTINGS'),
   favourites('/settings/favourites', 'FAVOURITES'),
-  search('/search', 'SEARCH'),
-  ;
+  hidden('/settings/Hidden', 'HIDDEN');
 
   /// AppRoute Constructor
   const AppRoute(this.path, this.name);
@@ -41,6 +41,12 @@ final GoRouter router =
                 name: AppRoute.favourites.name,
                 builder: (BuildContext context, GoRouterState state) =>
                     const FavouritesScreen(),
+              ),
+              GoRoute(
+                path: AppRoute.hidden.nameFromPath,
+                name: AppRoute.hidden.name,
+                builder: (BuildContext context, GoRouterState state) =>
+                    const HiddenAppsScreen(),
               )
             ]),
       ]),

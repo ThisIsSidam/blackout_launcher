@@ -33,7 +33,7 @@ class AppLauncher extends ConsumerWidget {
         menuChildren: [
           _buildFavouriteButton(ref, isFavourite),
           MenuItemButton(
-              leadingIcon: const Icon(Icons.hide_source),
+              leadingIcon: const Icon(Icons.remove_circle_outline),
               child: const Text('Hide App'),
               onPressed: () async {
                 ref.read(appListProvider.notifier).hideApp(app.packageName);

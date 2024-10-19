@@ -1,24 +1,24 @@
-import 'package:blackout_launcher/pages/favourite_screen/providers/favourites_provider.dart';
 import 'package:blackout_launcher/shared/app_info_plus.dart';
 import 'package:blackout_launcher/shared/async_widget/async_widget.dart';
 import 'package:blackout_launcher/shared/back_arrow.dart';
 import 'package:blackout_launcher/shared/providers/apps_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:installed_apps/app_info.dart';
 
-class FavouritesScreen extends ConsumerWidget {
-  const FavouritesScreen({super.key});
+class HiddenAppsScreen extends ConsumerWidget {
+  const HiddenAppsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    List<String> favouritePackageNames =
-        ref.watch(favouritesProvider).favourites;
+    AppListAsyncNotifier appListNotifier = ref.watch(appListProvider.notifier);
+    List<String> hiddenAppsPackageNames =
+        appListNotifier.getHiddenAppPackageNames();
+
     return Scaffold(
       appBar: AppBar(
         leading: const BackArrow(),
-        title: const Text('Favourite apps'),
+        title: const Text('Hidden apps'),
       ),
       body: AsyncValueWidget<List<AppInfo>>(
           value: ref.watch(appListProvider),
@@ -31,20 +31,14 @@ class FavouritesScreen extends ConsumerWidget {
                 return ListTile(
                   leading: apps[index].getIconImage(),
                   title: Text(apps[index].name),
-                  trailing: favouritePackageNames.contains(packageName)
-                      ? const Icon(Icons.favorite, color: Colors.red)
-                      : const Icon(Icons.favorite_border),
+                  trailing: hiddenAppsPackageNames.contains(packageName)
+                      ? const Icon(Icons.remove_circle, color: Colors.red)
+                      : const Icon(Icons.remove_circle_outline),
                   onTap: () {
-                    if (favouritePackageNames.contains(packageName)) {
-                      ref.read(favouritesProvider).removeApp(packageName);
+                    if (hiddenAppsPackageNames.contains(packageName)) {
+                      appListNotifier.removeHiddenApp(packageName);
                     } else {
-                      if (favouritePackageNames.length > 4) {
-                        Fluttertoast.showToast(
-                            msg: 'Not more than 5 favourites');
-                        return;
-                      }
-
-                      ref.read(favouritesProvider).addApp(packageName);
+                      appListNotifier.hideApp(packageName);
                     }
                   },
                 );

@@ -37,6 +37,11 @@ class AppListAsyncNotifier extends AsyncNotifier<List<AppInfo>> {
     reloadApps();
   }
 
+  void removeHiddenApp(String packageName) {
+    AppCategoriesDB.removeHiddenApp(packageName);
+    reloadApps();
+  }
+
   Future<void> reloadApps() async {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() => _fetchApps());
