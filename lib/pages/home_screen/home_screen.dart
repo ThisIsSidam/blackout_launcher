@@ -92,17 +92,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     title: _buildSearchBar(
                       context,
                     )),
-                queryProvider.isEmpty
-                    ? const SliverToBoxAdapter(child: ClockWidget())
-                    : SliverFillRemaining(
-                        child: AsyncValueWidget(
-                            value: ref.watch(appListProvider),
-                            data: (apps) {
-                              return _buildListOfApps(
-                                apps,
-                                settings,
-                              );
-                            })),
+                SliverFillRemaining(
+                    child: AsyncValueWidget(
+                        value: ref.watch(appListProvider),
+                        data: (apps) {
+                          return queryProvider.isEmpty
+                              ? ClockWidget()
+                              : _buildListOfApps(
+                                  apps,
+                                  settings,
+                                );
+                        })),
               ],
             )),
       ),
