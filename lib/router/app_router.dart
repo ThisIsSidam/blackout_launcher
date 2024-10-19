@@ -1,9 +1,9 @@
 import 'package:blackout_launcher/pages/favourite_screen/favourites_screen.dart';
-import 'package:blackout_launcher/pages/home_screen/home_screen.dart';
-import 'package:blackout_launcher/pages/search_screen/search_screen.dart';
 import 'package:blackout_launcher/pages/settings_screen/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+
+import '../pages/home_screen/home_screen.dart';
 
 enum AppRoute {
   home('/', 'HOME'),
@@ -43,11 +43,5 @@ final GoRouter router =
                     const FavouritesScreen(),
               )
             ]),
-        GoRoute(
-          path: AppRoute.search.nameFromPath,
-          name: AppRoute.search.name,
-          builder: (BuildContext context, GoRouterState state) =>
-              const SearchScreen(),
-        )
       ]),
 ]);

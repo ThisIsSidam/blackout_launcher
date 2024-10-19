@@ -10,24 +10,20 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        resizeToAvoidBottomInset: true,
         appBar: AppBar(
           leading: const BackArrow(),
           title: const Text('Settings'),
         ),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        body: SingleChildScrollView(
+            child: Column(
           children: [
-            SingleChildScrollView(
-                child: Column(
-              children: [
-                const UserPreferencesSection(),
-                _buildDivider(context),
-                const ShortcutsSection(),
-              ],
-            )),
+            const UserPreferencesSection(),
+            _buildDivider(context),
+            const ShortcutsSection(),
             _buildVersionWidget(),
           ],
-        ));
+        )));
   }
 
   Widget _buildDivider(BuildContext context) {
