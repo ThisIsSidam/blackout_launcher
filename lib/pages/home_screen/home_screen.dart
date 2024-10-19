@@ -1,17 +1,16 @@
 import 'package:blackout_launcher/pages/home_screen/providers/search_query_provider.dart';
 import 'package:blackout_launcher/pages/home_screen/widgets/clock.dart';
 import 'package:blackout_launcher/pages/home_screen/widgets/home_drawer.dart';
+import 'package:blackout_launcher/pages/home_screen/widgets/search_bar/search_bar.dart';
 import 'package:blackout_launcher/pages/home_screen/widgets/swipe_detector.dart';
 import 'package:blackout_launcher/shared/async_widget/async_widget.dart';
 import 'package:blackout_launcher/shared/providers/apps_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:installed_apps/app_info.dart';
 import 'package:installed_apps/installed_apps.dart';
 
 import '../../constants/enums/swipe_gestures.dart';
-import '../../router/app_router.dart';
 import '../../shared/providers/user_settings_provider.dart';
 import 'widgets/app_launcher/app_launcher.dart';
 
@@ -31,8 +30,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void initState() {
     focusNode = FocusNode();
     super.initState();
-
-    // Refresh when gains focus
     focusNode.addListener(_handleFocusChange);
   }
 
@@ -81,85 +78,32 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           focusNode.requestFocus();
         },
         child: Scaffold(
-            key: _scaffoldKey,
-            resizeToAvoidBottomInset: true,
-            drawer: const HomeDrawer(),
-            body: CustomScrollView(
-              slivers: [
-                SliverAppBar(
-                    toolbarHeight: 65,
-                    automaticallyImplyLeading: false,
-                    title: _buildSearchBar(
-                      context,
-                    )),
-                SliverFillRemaining(
-                    child: AsyncValueWidget(
-                        value: ref.watch(appListProvider),
-                        data: (apps) {
-                          return queryProvider.isEmpty
-                              ? ClockWidget()
-                              : _buildListOfApps(
-                                  apps,
-                                  settings,
-                                );
-                        })),
-              ],
-            )),
-      ),
-    );
-  }
-
-  Widget _buildSearchBar(BuildContext context) {
-    final queryProvider = ref.read(searchQueryProvider);
-    final controller = TextEditingController();
-
-    return Padding(
-      padding: const EdgeInsets.only(top: 16.0),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: isFocused ? Colors.white10 : Colors.transparent,
-          borderRadius: BorderRadius.circular(25),
-        ),
-        child: TextField(
-          textAlignVertical: TextAlignVertical.center,
-          textCapitalization: TextCapitalization.sentences,
-          focusNode: focusNode,
-          controller: controller,
-          style: Theme.of(context).textTheme.bodyMedium,
-          decoration: InputDecoration(
-            isCollapsed: true,
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 8, // Adjust this value to fine-tune vertical alignment
-            ),
-            prefixIcon: const Icon(Icons.search),
-            suffixIcon: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                IconButton(
-                    onPressed: () {
-                      controller.clear();
-                      queryProvider.clearQuery();
-                      focusNode.unfocus();
-                    },
-                    icon: const Icon(Icons.cancel)),
-                IconButton(
-                  onPressed: () {
-                    context.go(AppRoute.settings.path);
+          key: _scaffoldKey,
+          resizeToAvoidBottomInset: true,
+          drawer: const HomeDrawer(),
+          body: CustomScrollView(
+            slivers: [
+              SliverAppBar(
+                toolbarHeight: 65,
+                automaticallyImplyLeading: false,
+                title:
+                    CustomSearchBar(focusNode: focusNode, isFocused: isFocused),
+              ),
+              SliverFillRemaining(
+                child: AsyncValueWidget(
+                  value: ref.watch(appListProvider),
+                  data: (apps) {
+                    return queryProvider.isEmpty
+                        ? ClockWidget()
+                        : _buildListOfApps(
+                            apps,
+                            settings,
+                          );
                   },
-                  icon: const Icon(Icons.menu),
                 ),
-              ],
-            ),
-            border: InputBorder.none,
+              ),
+            ],
           ),
-          onChanged: (value) {
-            queryProvider.setQuery(value);
-          },
-          onTapOutside: (_) {
-            controller.clear();
-            focusNode.unfocus();
-          },
         ),
       ),
     );
