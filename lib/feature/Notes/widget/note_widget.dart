@@ -51,54 +51,48 @@ class _NoteWidgetState extends ConsumerState<NoteWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return ExpansionTile(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        tilePadding: EdgeInsets.symmetric(horizontal: 4),
-        showTrailingIcon: false,
-        title: Container(
-          width: double.maxFinite,
-          decoration: BoxDecoration(
-            color: Colors.black26,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: TextField(
-            controller: controller,
-            focusNode: focusNode,
-            textCapitalization: TextCapitalization.sentences,
-            decoration: const InputDecoration(
-              border: InputBorder.none,
+    return Row(
+      children: [
+        Flexible(
+          child: Container(
+            width: double.maxFinite,
+            decoration: BoxDecoration(
+              color: Colors.black26,
+              borderRadius: BorderRadius.circular(8),
             ),
-            maxLines: null,
-            onChanged: (val) {
-              widget.note.text = val;
-              ref.read(notesProvider).updateNote(widget.note);
-            },
+            padding: const EdgeInsets.only(left: 12),
+            margin: const EdgeInsets.symmetric(vertical: 4),
+            child: TextField(
+              controller: controller,
+              focusNode: focusNode,
+              textCapitalization: TextCapitalization.sentences,
+              decoration: const InputDecoration(
+                border: InputBorder.none,
+              ),
+              maxLines: null,
+              onChanged: (val) {
+                widget.note.text = val;
+                ref.read(notesProvider).updateNote(widget.note);
+              },
+            ),
           ),
         ),
-        children: [_buildEditPanel(context, focusNode)]);
-  }
-
-  Widget _buildEditPanel(BuildContext context, FocusNode focusNode) {
-    return SizedBox(
-      height: 35,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          TextButton(
-            onPressed: () {},
-            child: Text('[ ]'),
+        IconButton(
+          visualDensity: VisualDensity.compact,
+          iconSize: 20,
+          style: ButtonStyle(
+            visualDensity: VisualDensity.compact,
+            padding: WidgetStatePropertyAll(EdgeInsets.zero),
           ),
-          TextButton(onPressed: () {}, child: Text('Break')),
-          Spacer(),
-          IconButton(
-            icon: Icon(Icons.delete),
-            onPressed: () {
-              ref.read(notesProvider).removeNote(widget.note);
-            },
-          )
-        ],
-      ),
+          padding: EdgeInsets.zero,
+          icon: Icon(
+            Icons.delete,
+          ),
+          onPressed: () {
+            ref.read(notesProvider).removeNote(widget.note);
+          },
+        ),
+      ],
     );
   }
 }

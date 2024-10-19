@@ -92,6 +92,7 @@ class NotesSection extends HookConsumerWidget {
               color: Theme.of(context).colorScheme.onPrimary,
             ),
             label: Text('Add Note',
-                style: Theme.of(context).textTheme.titleSmall)));
+                style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                    color: Theme.of(context).colorScheme.onPrimary))));
   }
 }
