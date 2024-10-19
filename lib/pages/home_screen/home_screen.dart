@@ -4,6 +4,7 @@ import 'package:blackout_launcher/pages/home_screen/widgets/app_launcher/app_lau
 import 'package:blackout_launcher/pages/home_screen/widgets/clock.dart';
 import 'package:blackout_launcher/pages/home_screen/widgets/home_drawer.dart';
 import 'package:blackout_launcher/pages/home_screen/widgets/swipe_detector.dart';
+import 'package:blackout_launcher/pages/search_screen/providers/search_query_provider.dart';
 import 'package:blackout_launcher/shared/async_widget/async_widget.dart';
 import 'package:blackout_launcher/shared/providers/apps_provider.dart';
 import 'package:blackout_launcher/shared/providers/user_settings_provider.dart';
@@ -58,6 +59,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               isRight: false);
         },
         onSwipeUpwards: () {
+          ref.read(searchQueryProvider).clearQuery();
           context.go(AppRoute.search.path);
         },
         child: Scaffold(
@@ -97,6 +99,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         contentPadding: EdgeInsets.zero,
         leading: IconButton(
           onPressed: () {
+            ref.read(searchQueryProvider).clearQuery();
             context.go(AppRoute.search.path);
           },
           icon: Icon(Icons.search),

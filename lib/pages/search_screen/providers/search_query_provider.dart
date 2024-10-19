@@ -10,6 +10,10 @@ class SearchQueryNotifier extends ChangeNotifier {
     _query = query;
     notifyListeners();
   }
+
+  void clearQuery() {
+    _query = '';
+  }
 }
 
 final searchQueryProvider =
