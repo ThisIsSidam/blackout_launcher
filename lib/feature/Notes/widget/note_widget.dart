@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../modal/notes_modal.dart';
 import '../provider/notes_provider.dart';
-import 'edit_panel.dart';
 
 class NoteWidget extends ConsumerStatefulWidget {
   const NoteWidget({
@@ -34,9 +33,11 @@ class _NoteWidgetState extends ConsumerState<NoteWidget> {
   }
 
   void _onFocusChange() {
-    setState(() {
-      hasFocus = focusNode.hasFocus;
-    });
+    if (mounted) {
+      setState(() {
+        hasFocus = focusNode.hasFocus;
+      });
+    }
   }
 
   @override
@@ -50,16 +51,17 @@ class _NoteWidgetState extends ConsumerState<NoteWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
+    return ExpansionTile(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        tilePadding: EdgeInsets.symmetric(horizontal: 4),
+        showTrailingIcon: false,
+        title: Container(
           width: double.maxFinite,
           decoration: BoxDecoration(
             color: Colors.black26,
             borderRadius: BorderRadius.circular(8),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 12),
-          margin: const EdgeInsets.symmetric(vertical: 4),
           child: TextField(
             controller: controller,
             focusNode: focusNode,
@@ -74,8 +76,29 @@ class _NoteWidgetState extends ConsumerState<NoteWidget> {
             },
           ),
         ),
-        if (hasFocus) const EditPanel(),
-      ],
+        children: [_buildEditPanel(context, focusNode)]);
+  }
+
+  Widget _buildEditPanel(BuildContext context, FocusNode focusNode) {
+    return SizedBox(
+      height: 35,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          TextButton(
+            onPressed: () {},
+            child: Text('[ ]'),
+          ),
+          TextButton(onPressed: () {}, child: Text('Break')),
+          Spacer(),
+          IconButton(
+            icon: Icon(Icons.delete),
+            onPressed: () {
+              ref.read(notesProvider).removeNote(widget.note);
+            },
+          )
+        ],
+      ),
     );
   }
 }

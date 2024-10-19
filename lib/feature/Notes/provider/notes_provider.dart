@@ -9,7 +9,6 @@ class NotesNotifier extends ChangeNotifier {
   // Add a map to store FocusNodes
   final Map<int, FocusNode> focusNodes = {};
 
-  // Add method to get or create FocusNode
   FocusNode getFocusNode(int noteId) {
     if (!focusNodes.containsKey(noteId)) {
       focusNodes[noteId] = FocusNode();
@@ -19,7 +18,6 @@ class NotesNotifier extends ChangeNotifier {
 
   @override
   void dispose() {
-    // Clean up FocusNodes
     for (final focusNode in focusNodes.values) {
       focusNode.dispose();
     }

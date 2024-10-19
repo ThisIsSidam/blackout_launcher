@@ -13,43 +13,45 @@ class NotesSection extends HookConsumerWidget {
     final List<NoteModal> notes = notesProviderObj.notes;
 
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.9,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            child: Text(
-              'Notes',
-              style: Theme.of(context).textTheme.titleMedium,
+      height: MediaQuery.sizeOf(context).height * 0.95,
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        body: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              toolbarHeight: 35,
+              automaticallyImplyLeading: false,
+              title: Text(
+                'Notes',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
             ),
-          ),
-          Flexible(
-              child: ReorderableListView(
-            // To hide the child margins when reordering
-            proxyDecorator: (child, index, animation) {
-              return Material(
-                type: MaterialType.transparency,
-                child: child,
-              );
-            },
-            shrinkWrap: true,
-            onReorder: (int oldIndex, int newIndex) {
-              if (oldIndex < newIndex) {
-                newIndex -= 1;
-              }
-              final NoteModal item = notes.removeAt(oldIndex);
-              notes.insert(newIndex, item);
-              notesProviderObj.updateNotes(notes);
-            },
-            footer: _buildNewNoteButton(context, ref),
-            children: [
-              for (NoteModal note in notes)
-                _buildNoteWidget(note, notesProviderObj)
-            ],
-          )),
-        ],
+            SliverReorderableList(
+              // To hide the child margins when reordering
+              proxyDecorator: (child, index, animation) {
+                return Material(
+                  type: MaterialType.transparency,
+                  child: child,
+                );
+              },
+              itemCount: notes.length + 1,
+              onReorder: (int oldIndex, int newIndex) {
+                if (oldIndex < newIndex) {
+                  newIndex -= 1;
+                }
+                final NoteModal item = notes.removeAt(oldIndex);
+                notes.insert(newIndex, item);
+                notesProviderObj.updateNotes(notes);
+              },
+              itemBuilder: (BuildContext context, int index) {
+                if (index == notes.length) {
+                  return _buildNewNoteButton(context, ref);
+                }
+                return _buildNoteWidget(notes[index], notesProviderObj);
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -64,6 +66,7 @@ class NotesSection extends HookConsumerWidget {
 
   Widget _buildNewNoteButton(BuildContext context, WidgetRef ref) {
     return SizedBox(
+        key: ValueKey('new-note'),
         width: double.infinity,
         child: ElevatedButton.icon(
             style: ElevatedButton.styleFrom(
