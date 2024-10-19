@@ -24,6 +24,31 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  late final FocusNode focusNode;
+  bool isFocused = false;
+
+  @override
+  void initState() {
+    focusNode = FocusNode();
+    super.initState();
+
+    // Refresh when gains focus
+    focusNode.addListener(_handleFocusChange);
+  }
+
+  void _handleFocusChange() {
+    if (mounted) {
+      setState(() {
+        isFocused = focusNode.hasFocus;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    focusNode.dispose();
+    super.dispose();
+  }
 
   void _performSwipeAction(SwipeGesture swipeGesture, {bool isRight = true}) {
     if (swipeGesture == SwipeGesture.openDrawer) {
@@ -42,11 +67,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     final settings = ref.watch(userSettingProvider);
     final queryProvider = ref.watch(searchQueryProvider);
-    final focusNode = FocusNode();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      focusNode.requestFocus();
-    });
     return PopScope(
       canPop: false,
       child: SwipeDetector(
@@ -69,7 +90,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 SliverAppBar(
                     toolbarHeight: 65,
                     automaticallyImplyLeading: false,
-                    title: _buildSearchBar(context, focusNode)),
+                    title: _buildSearchBar(
+                      context,
+                    )),
                 queryProvider.isEmpty
                     ? const SliverToBoxAdapter(child: ClockWidget())
                     : SliverFillRemaining(
@@ -87,13 +110,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _buildSearchBar(BuildContext context, FocusNode focusNode) {
+  Widget _buildSearchBar(BuildContext context) {
     final queryProvider = ref.read(searchQueryProvider);
     return Padding(
       padding: const EdgeInsets.only(top: 16.0),
       child: DecoratedBox(
         decoration: BoxDecoration(
-          color: Colors.white10,
+          color: isFocused ? Colors.white10 : Colors.transparent,
           borderRadius: BorderRadius.circular(25),
         ),
         child: TextField(
