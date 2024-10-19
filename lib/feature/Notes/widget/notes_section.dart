@@ -47,7 +47,18 @@ class NotesSection extends HookConsumerWidget {
                 if (index == notes.length) {
                   return _buildNewNoteButton(context, ref);
                 }
-                return _buildNoteWidget(notes[index], notesProviderObj);
+                return Row(
+                  key: ValueKey('note_row_${notes[index].id}'),
+                  children: [
+                    ReorderableDragStartListener(
+                      index: index,
+                      child: const Icon(Icons.drag_indicator),
+                    ),
+                    Flexible(
+                        child:
+                            _buildNoteWidget(notes[index], notesProviderObj)),
+                  ],
+                );
               },
             ),
           ],
