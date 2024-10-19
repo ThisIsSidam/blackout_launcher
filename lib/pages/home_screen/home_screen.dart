@@ -102,7 +102,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ref.read(searchQueryProvider).clearQuery();
             context.go(AppRoute.search.path);
           },
-          icon: Icon(Icons.search),
+          icon: const Icon(Icons.search),
         ),
         onTap: () {
           context.go(AppRoute.search.path);
@@ -111,7 +111,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           onPressed: () {
             context.go(AppRoute.settings.path);
           },
-          icon: Icon(Icons.menu),
+          icon: const Icon(Icons.menu),
         ),
       ),
     );

@@ -41,6 +41,9 @@ class ShortcutsSection extends StatelessWidget {
       return MenuAnchor(
         builder: (context, controller, child) {
           return ListTile(
+            leading: Icon(
+              Icons.swipe_right,
+            ),
             title: Text('On right swipe',
                 style: Theme.of(context).textTheme.titleSmall),
             subtitle: Text(
@@ -95,6 +98,9 @@ class ShortcutsSection extends StatelessWidget {
       return MenuAnchor(
         builder: (context, controller, child) {
           return ListTile(
+            leading: Icon(
+              Icons.swipe_left,
+            ),
             title: Text('On left swipe',
                 style: Theme.of(context).textTheme.titleSmall),
             subtitle: Text(
@@ -120,6 +126,11 @@ class ShortcutsSection extends StatelessWidget {
                 userSettings.leftSwipeOpenApp = selectedApp.packageName;
               }
             },
+            style: ButtonStyle(
+              foregroundColor: WidgetStatePropertyAll(
+                Theme.of(context).colorScheme.primary,
+              ),
+            ),
           ),
           MenuItemButton(
             child: const Text('None'),

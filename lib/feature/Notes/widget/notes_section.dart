@@ -36,6 +36,7 @@ class NotesSection extends HookConsumerWidget {
               },
               itemCount: notes.length + 1,
               onReorder: (int oldIndex, int newIndex) {
+                if (newIndex > notes.length) return;
                 if (oldIndex < newIndex) {
                   newIndex -= 1;
                 }

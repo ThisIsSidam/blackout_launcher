@@ -21,7 +21,7 @@ class ClockWidget extends StatelessWidget {
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 150,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w300,
                 height: 1.0, // Minimal line height
               ),
               textAlign: TextAlign.center,

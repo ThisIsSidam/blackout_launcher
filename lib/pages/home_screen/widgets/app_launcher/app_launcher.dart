@@ -44,7 +44,7 @@ class AppLauncher extends ConsumerWidget {
           if (launcherType == LauncherType.iconOnly) {
             child = _buildIconButton();
           } else if (launcherType == LauncherType.iconAndText) {
-            child = _buildIconTextButton();
+            child = _buildIconTextButton(context);
           } else if (launcherType == LauncherType.tile) {
             child = _buildTileButton(context);
           } else {
@@ -65,18 +65,16 @@ class AppLauncher extends ConsumerWidget {
         });
   }
 
-  Widget _buildIconTextButton() {
-    return SizedBox(
-      width: iconSize,
-      child: Column(
-        children: [
-          app.getIconImage(h: iconSize, w: iconSize),
-          Text(
-            app.name,
-            overflow: TextOverflow.ellipsis,
-          )
-        ],
-      ),
+  Widget _buildIconTextButton(BuildContext context) {
+    return Column(
+      children: [
+        Flexible(child: app.getIconImage(h: iconSize, w: iconSize)),
+        Text(
+          app.name,
+          style: Theme.of(context).textTheme.labelSmall,
+          overflow: TextOverflow.ellipsis,
+        )
+      ],
     );
   }
 

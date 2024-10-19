@@ -24,6 +24,7 @@ class UserPreferencesSection extends StatelessWidget {
           ),
         ),
         ListTile(
+            leading: Icon(Icons.favorite),
             title: Text(
               'Edit favourite apps',
               style: Theme.of(context).textTheme.titleSmall,
@@ -41,7 +42,9 @@ class UserPreferencesSection extends StatelessWidget {
 
   Widget _buildIconScaleTile(BuildContext context) {
     return ListTile(
-      title: Text('Text Scale', style: Theme.of(context).textTheme.titleSmall),
+      leading:
+          Icon(Icons.signal_cellular_4_bar_sharp, color: Colors.transparent),
+      title: Text('Icon Size', style: Theme.of(context).textTheme.titleSmall),
       subtitle: Row(
         children: [
           const Text('A', style: TextStyle(color: Colors.white)),
@@ -68,10 +71,10 @@ class UserPreferencesSection extends StatelessWidget {
                                     shape: BoxShape.circle,
                                     color: userSettingsProvider.iconScale ==
                                             scaleValues[index]
-                                        ? Theme.of(context)
+                                        ? Theme.of(context).colorScheme.primary
+                                        : Theme.of(context)
                                             .colorScheme
-                                            .secondary
-                                        : Colors.white,
+                                            .onPrimary,
                                   ),
                                 ),
                               ),
@@ -88,7 +91,9 @@ class UserPreferencesSection extends StatelessWidget {
 
   Widget _buildStatusBarTile(BuildContext context) {
     return ListTile(
-        title: Text('Show status bar',
+        leading:
+            const Icon(Icons.assistant_navigation, color: Colors.transparent),
+        title: Text('Hide status bar',
             style: Theme.of(context).textTheme.titleSmall),
         trailing: Consumer(builder: (context, ref, child) {
           final userSetting = ref.watch(userSettingProvider);
@@ -105,7 +110,9 @@ class UserPreferencesSection extends StatelessWidget {
 
   Widget _buildNavigationBarTile(BuildContext context) {
     return ListTile(
-        title: Text('Show navigation bar',
+        leading:
+            const Icon(Icons.assistant_navigation, color: Colors.transparent),
+        title: Text('Hide navigation bar',
             style: Theme.of(context).textTheme.titleSmall),
         trailing: Consumer(builder: (context, ref, child) {
           final userSetting = ref.watch(userSettingProvider);
