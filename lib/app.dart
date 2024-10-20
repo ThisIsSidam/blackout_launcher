@@ -35,21 +35,13 @@ class MyApp extends ConsumerWidget {
       }
       return MaterialApp.router(
         theme: ThemeData(
-            colorScheme: lightColorScheme,
-            useMaterial3: true,
-            bottomSheetTheme: BottomSheetThemeData(
-                shape: const RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(25))),
-                backgroundColor: lightColorScheme.surface)),
+          colorScheme: lightColorScheme,
+          useMaterial3: true,
+        ),
         darkTheme: ThemeData(
-            colorScheme: darkColorScheme,
-            useMaterial3: true,
-            bottomSheetTheme: BottomSheetThemeData(
-                shape: const RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(25))),
-                backgroundColor: darkColorScheme.surface)),
+          colorScheme: darkColorScheme,
+          useMaterial3: true,
+        ),
         themeMode: ThemeMode.system,
         routerConfig: router,
       );

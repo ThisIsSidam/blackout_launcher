@@ -87,28 +87,34 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 key: _scaffoldKey,
                 resizeToAvoidBottomInset: true,
                 drawer: const HomeDrawer(),
-                body: CustomScrollView(
-                  slivers: [
-                    SliverAppBar(
-                      toolbarHeight: 65,
-                      backgroundColor: Colors.transparent,
-                      automaticallyImplyLeading: false,
-                      title: CustomSearchBar(
-                          focusNode: focusNode, isFocused: isFocused),
+                body: Column(
+                  children: [
+                    Expanded(
+                      child: CustomScrollView(
+                        slivers: [
+                          SliverAppBar(
+                            toolbarHeight: 65,
+                            backgroundColor: Colors.transparent,
+                            automaticallyImplyLeading: false,
+                            title: CustomSearchBar(
+                                focusNode: focusNode, isFocused: isFocused),
+                          ),
+                          SliverFillRemaining(
+                              child: isFocused || queryProvider.query.isNotEmpty
+                                  ? Padding(
+                                      padding: const EdgeInsets.all(8),
+                                      child: _buildListOfApps(
+                                        apps,
+                                        settings,
+                                      ),
+                                    )
+                                  : ClockWidget()),
+                        ],
+                      ),
                     ),
-                    SliverFillRemaining(
-                        child: isFocused || queryProvider.query.isNotEmpty
-                            ? Padding(
-                                padding: const EdgeInsets.all(8),
-                                child: _buildListOfApps(
-                                  apps,
-                                  settings,
-                                ),
-                              )
-                            : ClockWidget()),
+                    _buildFavouritesRow(apps, settings),
                   ],
                 ),
-                bottomSheet: _buildFavouritesRow(apps, settings),
               );
             }),
       ),
@@ -130,7 +136,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(25)),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8),
+        padding: const EdgeInsets.all(8),
         child: filteredApps.isEmpty
             ? Align(
                 alignment: Alignment.topCenter,
@@ -154,42 +160,51 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   Widget _buildFavouritesRow(List<AppInfo> apps, SettingsNotifier settings) {
     return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16.0),
+        padding: const EdgeInsets.all(8),
         child: Consumer(builder: (context, ref, child) {
           List<String> favourites = ref.watch(favouritesProvider).favourites;
           List<AppInfo> favouriteApps = apps
               .where((app) => favourites.contains(app.packageName))
               .toList();
 
-          return LayoutBuilder(
-            builder: (context, constraints) {
-              final children = favouriteApps.reversed
-                  .map((app) => Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                        child: AppLauncher(
-                          app: app,
-                          launcherType: LauncherType.iconOnly,
-                          iconSize: settings.iconScale,
-                        ),
-                      ))
-                  .toList();
+          return DecoratedBox(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(25),
+                color: Theme.of(context).colorScheme.surface),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final children = favouriteApps.reversed
+                      .map((app) => Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 4.0),
+                            child: AppLauncher(
+                              app: app,
+                              launcherType: LauncherType.iconOnly,
+                              iconSize: settings.iconScale,
+                            ),
+                          ))
+                      .toList();
 
-              if (favouriteApps.length * (settings.iconScale + 8) <=
-                  constraints.maxWidth) {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: children,
-                );
-              }
+                  if (favouriteApps.length * (settings.iconScale + 8) <=
+                      constraints.maxWidth) {
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: children,
+                    );
+                  }
 
-              return SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: Row(
-                  children: children,
-                ),
-              );
-            },
+                  return SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Row(
+                      children: children,
+                    ),
+                  );
+                },
+              ),
+            ),
           );
         }));
   }
