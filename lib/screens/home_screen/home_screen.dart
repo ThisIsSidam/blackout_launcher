@@ -148,30 +148,51 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         shadowColor: Colors.black,
         backgroundColor: Colors.transparent,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(12.0)),
         ),
         onClosing: () {},
         builder: (context) {
           return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: Consumer(builder: (context, ref, child) {
-              List<String> favourites =
-                  ref.watch(favouritesProvider).favourites;
-              List<AppInfo> favouriteApps = apps
-                  .where((app) => favourites.contains(app.packageName))
-                  .toList();
-              return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    for (final app in favouriteApps)
-                      AppLauncher(
-                        app: app,
-                        launcherType: LauncherType.iconOnly,
-                        iconSize: settings.iconScale,
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
+              child: Consumer(builder: (context, ref, child) {
+                List<String> favourites =
+                    ref.watch(favouritesProvider).favourites;
+                List<AppInfo> favouriteApps = apps
+                    .where((app) => favourites.contains(app.packageName))
+                    .toList();
+
+                return LayoutBuilder(
+                  builder: (context, constraints) {
+                    final children = favouriteApps.reversed
+                        .map((app) => Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 4.0),
+                              child: AppLauncher(
+                                app: app,
+                                launcherType: LauncherType.iconOnly,
+                                iconSize: settings.iconScale,
+                              ),
+                            ))
+                        .toList();
+
+                    if (favouriteApps.length * (settings.iconScale + 8) <=
+                        constraints.maxWidth) {
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: children,
+                      );
+                    }
+
+                    return SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: Row(
+                        children: children,
                       ),
-                  ]);
-            }),
-          );
+                    );
+                  },
+                );
+              }));
         });
   }
 }

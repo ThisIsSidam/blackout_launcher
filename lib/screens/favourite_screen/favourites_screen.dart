@@ -4,7 +4,6 @@ import 'package:blackout_launcher/shared/async_widget/async_widget.dart';
 import 'package:blackout_launcher/shared/back_arrow.dart';
 import 'package:blackout_launcher/shared/providers/apps_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:installed_apps/app_info.dart';
 
@@ -38,12 +37,6 @@ class FavouritesScreen extends ConsumerWidget {
                     if (favouritePackageNames.contains(packageName)) {
                       ref.read(favouritesProvider).removeApp(packageName);
                     } else {
-                      if (favouritePackageNames.length > 4) {
-                        Fluttertoast.showToast(
-                            msg: 'Not more than 5 favourites');
-                        return;
-                      }
-
                       ref.read(favouritesProvider).addApp(packageName);
                     }
                   },
