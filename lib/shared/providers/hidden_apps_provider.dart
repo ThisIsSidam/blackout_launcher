@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class HiddenAppsNotifier extends ChangeNotifier {
-  List<String> hiddenApps = AppCategoriesDB.getApps('favourites');
+  List<String> hiddenApps = AppCategoriesDB.getHiddenApps();
 
   void hideApp(String packageName) {
     if (hiddenApps.contains(packageName)) return;
