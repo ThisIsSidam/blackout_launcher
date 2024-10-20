@@ -114,23 +114,31 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final queryProvider = ref.watch(searchQueryProvider);
     final hiddenApps = ref.watch(hiddenAppsProvider).hiddenApps;
     final apps = allApps.where((app) => !hiddenApps.contains(app.packageName));
+
+    final List<AppInfo> filteredApps = apps
+        .where((app) =>
+            app.name.toLowerCase().contains(queryProvider.query.toLowerCase()))
+        .toList();
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: GridView.count(
-        crossAxisCount: 5,
-        crossAxisSpacing: 8,
-        mainAxisSpacing: 16,
-        children: [
-          for (var app in apps.where((app) => app.name
-              .toLowerCase()
-              .contains(queryProvider.query.toLowerCase())))
-            AppLauncher(
-              app: app,
-              launcherType: LauncherType.iconAndText,
-              iconSize: settings.iconScale,
+      child: filteredApps.isEmpty
+          ? Align(
+              alignment: Alignment.topCenter,
+              child: Text("No apps found for term '${queryProvider.query}'"))
+          : GridView.count(
+              crossAxisCount: 5,
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 16,
+              children: [
+                for (var app in filteredApps)
+                  AppLauncher(
+                    app: app,
+                    launcherType: LauncherType.iconAndText,
+                    iconSize: settings.iconScale,
+                  ),
+              ],
             ),
-        ],
-      ),
     );
   }
 
