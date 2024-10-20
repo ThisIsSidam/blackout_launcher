@@ -2,6 +2,7 @@ import 'package:blackout_launcher/shared/app_info_plus.dart';
 import 'package:blackout_launcher/shared/async_widget/async_widget.dart';
 import 'package:blackout_launcher/shared/back_arrow.dart';
 import 'package:blackout_launcher/shared/providers/apps_provider.dart';
+import 'package:blackout_launcher/shared/providers/hidden_apps_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:installed_apps/app_info.dart';
@@ -11,9 +12,8 @@ class HiddenAppsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    AppListAsyncNotifier appListNotifier = ref.watch(appListProvider.notifier);
-    List<String> hiddenAppsPackageNames =
-        appListNotifier.getHiddenAppPackageNames();
+    HiddenAppsNotifier hiddenNotifier = ref.watch(hiddenAppsProvider);
+    List<String> hiddenAppsPackageNames = hiddenNotifier.hiddenApps;
 
     return Scaffold(
       appBar: AppBar(
@@ -36,9 +36,9 @@ class HiddenAppsScreen extends ConsumerWidget {
                       : const Icon(Icons.remove_circle_outline),
                   onTap: () {
                     if (hiddenAppsPackageNames.contains(packageName)) {
-                      appListNotifier.removeHiddenApp(packageName);
+                      hiddenNotifier.removeApp(packageName);
                     } else {
-                      appListNotifier.hideApp(packageName);
+                      hiddenNotifier.hideApp(packageName);
                     }
                   },
                 );

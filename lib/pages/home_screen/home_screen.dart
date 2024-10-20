@@ -5,6 +5,7 @@ import 'package:blackout_launcher/pages/home_screen/widgets/search_bar/search_ba
 import 'package:blackout_launcher/pages/home_screen/widgets/swipe_detector.dart';
 import 'package:blackout_launcher/shared/async_widget/async_widget.dart';
 import 'package:blackout_launcher/shared/providers/apps_provider.dart';
+import 'package:blackout_launcher/shared/providers/hidden_apps_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:installed_apps/app_info.dart';
@@ -111,8 +112,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   Widget _buildListOfApps(List<AppInfo> allApps, SettingsNotifier settings) {
     final queryProvider = ref.watch(searchQueryProvider);
-    final hiddenApps =
-        ref.read(appListProvider.notifier).getHiddenAppPackageNames();
+    final hiddenApps = ref.watch(hiddenAppsProvider).hiddenApps;
     final apps = allApps.where((app) => !hiddenApps.contains(app.packageName));
     return Padding(
       padding: const EdgeInsets.all(16.0),

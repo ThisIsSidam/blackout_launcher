@@ -1,4 +1,3 @@
-import 'package:blackout_launcher/database/app_categories_db.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -26,20 +25,6 @@ class AppListAsyncNotifier extends AsyncNotifier<List<AppInfo>> {
     //TODO: Check if installed_apps new release is out or not and move to it
     // Currently using direct github link from the person who sent the PR.
     return await InstalledApps.getInstalledApps(false, true, "", true);
-  }
-
-  List<String> getHiddenAppPackageNames() {
-    return AppCategoriesDB.getHiddenApps();
-  }
-
-  void hideApp(String packageName) {
-    AppCategoriesDB.hideApp(packageName);
-    reloadApps();
-  }
-
-  void removeHiddenApp(String packageName) {
-    AppCategoriesDB.removeHiddenApp(packageName);
-    reloadApps();
   }
 
   Future<void> reloadApps() async {
