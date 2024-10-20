@@ -1,10 +1,11 @@
-import 'package:blackout_launcher/pages/favourite_screen/providers/favourites_provider.dart';
 import 'package:blackout_launcher/shared/app_info_plus.dart';
 import 'package:blackout_launcher/shared/providers/hidden_apps_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:installed_apps/app_info.dart';
 import 'package:installed_apps/installed_apps.dart';
+
+import '../../../favourite_screen/providers/favourites_provider.dart';
 
 enum LauncherType {
   iconOnly,

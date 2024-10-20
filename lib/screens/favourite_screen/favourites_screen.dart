@@ -1,4 +1,4 @@
-import 'package:blackout_launcher/pages/favourite_screen/providers/favourites_provider.dart';
+import 'package:blackout_launcher/screens/favourite_screen/providers/favourites_provider.dart';
 import 'package:blackout_launcher/shared/app_info_plus.dart';
 import 'package:blackout_launcher/shared/async_widget/async_widget.dart';
 import 'package:blackout_launcher/shared/back_arrow.dart';

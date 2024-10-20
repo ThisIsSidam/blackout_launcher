@@ -1,10 +1,10 @@
-import 'package:blackout_launcher/pages/favourite_screen/favourites_screen.dart';
-import 'package:blackout_launcher/pages/hidden_apps_screen/hidden_apps_screen.dart';
-import 'package:blackout_launcher/pages/settings_screen/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../pages/home_screen/home_screen.dart';
+import '../screens/favourite_screen/favourites_screen.dart';
+import '../screens/hidden_apps_screen/hidden_apps_screen.dart';
+import '../screens/home_screen/home_screen.dart';
+import '../screens/settings_screen/settings_screen.dart';
 
 enum AppRoute {
   home('/', 'HOME'),

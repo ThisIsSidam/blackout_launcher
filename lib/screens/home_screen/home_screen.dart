@@ -1,8 +1,8 @@
-import 'package:blackout_launcher/pages/home_screen/providers/search_query_provider.dart';
-import 'package:blackout_launcher/pages/home_screen/widgets/clock.dart';
-import 'package:blackout_launcher/pages/home_screen/widgets/home_drawer.dart';
-import 'package:blackout_launcher/pages/home_screen/widgets/search_bar/search_bar.dart';
-import 'package:blackout_launcher/pages/home_screen/widgets/swipe_detector.dart';
+import 'package:blackout_launcher/screens/home_screen/providers/search_query_provider.dart';
+import 'package:blackout_launcher/screens/home_screen/widgets/clock.dart';
+import 'package:blackout_launcher/screens/home_screen/widgets/home_drawer.dart';
+import 'package:blackout_launcher/screens/home_screen/widgets/search_bar/search_bar.dart';
+import 'package:blackout_launcher/screens/home_screen/widgets/swipe_detector.dart';
 import 'package:blackout_launcher/shared/async_widget/async_widget.dart';
 import 'package:blackout_launcher/shared/providers/apps_provider.dart';
 import 'package:blackout_launcher/shared/providers/hidden_apps_provider.dart';
