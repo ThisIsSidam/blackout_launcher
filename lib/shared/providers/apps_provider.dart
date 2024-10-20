@@ -22,19 +22,24 @@ class AppListAsyncNotifier extends AsyncNotifier<List<AppInfo>> {
   }
 
   Future<List<AppInfo>> _fetchApps() async {
-    //TODO: Check if installed_apps new release is out or not and move to it
-    // Currently using direct github link from the person who sent the PR.
     return await InstalledApps.getInstalledApps(false, true, "", true);
   }
 
   Future<void> reloadApps() async {
-    state = const AsyncValue.loading();
+    state = const AsyncValue<List<AppInfo>>.loading().copyWithPrevious(state);
     state = await AsyncValue.guard(() => _fetchApps());
   }
 
   void _onAppChanged(dynamic event) {
-    if (event == 'installed' || event == 'uninstalled') {
-      reloadApps();
+    if (event is Map) {
+      final eventType = event['event'] as String;
+      final packageName = event['package'] as String?;
+
+      debugPrint('App $eventType: ${packageName ?? "unknown"}');
+
+      if (eventType == 'installed' || eventType == 'uninstalled') {
+        reloadApps();
+      }
     }
   }
 

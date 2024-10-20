@@ -6,6 +6,7 @@ class AsyncValueWidget<T> extends StatelessWidget {
 
   // input async value
   final AsyncValue<T> value;
+
   // output builder function
   final Widget Function(T) data;
 
@@ -13,7 +14,15 @@ class AsyncValueWidget<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     return value.when(
       data: data,
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () {
+        // Check if the provider has existing data.
+        // This is the data the state had before reloading,
+        // added through .loading().copyWithPrevious(state);
+        if (value.hasValue) {
+          return data(value.value as T);
+        }
+        return const Center(child: CircularProgressIndicator());
+      },
       error: (e, _) => Center(
         child: Text(
           e.toString(),

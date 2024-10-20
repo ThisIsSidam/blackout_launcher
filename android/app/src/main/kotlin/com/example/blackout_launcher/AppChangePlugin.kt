@@ -9,8 +9,14 @@ import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodChannel
 
 class AppChangePlugin(private val context: Context, flutterEngine: FlutterEngine) {
-    private val methodChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "com.blackout.launcher/app_changes")
-    private val eventChannel = EventChannel(flutterEngine.dartExecutor.binaryMessenger, "com.blackout.launcher/app_change_events")
+    private val methodChannel = MethodChannel(
+        flutterEngine.dartExecutor.binaryMessenger,
+        "com.blackout.launcher/app_changes"
+    )
+    private val eventChannel = EventChannel(
+        flutterEngine.dartExecutor.binaryMessenger,
+        "com.blackout.launcher/app_change_events"
+    )
 
     init {
         eventChannel.setStreamHandler(AppChangeStreamHandler(context))
@@ -23,9 +29,25 @@ class AppChangeStreamHandler(private val context: Context) : EventChannel.Stream
     override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
         receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
+                val packageName = intent?.data?.schemeSpecificPart
                 when (intent?.action) {
-                    Intent.ACTION_PACKAGE_ADDED -> events?.success("installed")
-                    Intent.ACTION_PACKAGE_REMOVED -> events?.success("uninstalled")
+                    Intent.ACTION_PACKAGE_ADDED -> {
+                        events?.success(
+                            mapOf(
+                                "event" to "installed",
+                                "package" to packageName
+                            )
+                        )
+                    }
+
+                    Intent.ACTION_PACKAGE_REMOVED -> {
+                        events?.success(
+                            mapOf(
+                                "event" to "uninstalled",
+                                "package" to packageName
+                            )
+                        )
+                    }
                 }
             }
         }
