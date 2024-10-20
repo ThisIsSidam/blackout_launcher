@@ -27,7 +27,7 @@ class MyApp extends ConsumerWidget {
       } else {
         // Fallback colors if dynamic colors are not available
         lightColorScheme = ColorScheme.fromSwatch(
-          primarySwatch: Colors.blue,
+          primarySwatch: Colors.brown,
         );
         darkColorScheme = ColorScheme.fromSwatch(
           brightness: Brightness.dark,
@@ -35,10 +35,21 @@ class MyApp extends ConsumerWidget {
       }
       return MaterialApp.router(
         theme: ThemeData(
-          colorScheme: lightColorScheme,
-          useMaterial3: true,
-        ),
-        darkTheme: ThemeData(colorScheme: darkColorScheme, useMaterial3: true),
+            colorScheme: lightColorScheme,
+            useMaterial3: true,
+            bottomSheetTheme: BottomSheetThemeData(
+                shape: const RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(25))),
+                backgroundColor: lightColorScheme.surface)),
+        darkTheme: ThemeData(
+            colorScheme: darkColorScheme,
+            useMaterial3: true,
+            bottomSheetTheme: BottomSheetThemeData(
+                shape: const RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(25))),
+                backgroundColor: darkColorScheme.surface)),
         themeMode: ThemeMode.system,
         routerConfig: router,
       );

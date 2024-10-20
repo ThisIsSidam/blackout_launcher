@@ -83,6 +83,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             value: ref.watch(appListProvider),
             data: (apps) {
               return Scaffold(
+                backgroundColor: Colors.transparent,
                 key: _scaffoldKey,
                 resizeToAvoidBottomInset: true,
                 drawer: const HomeDrawer(),
@@ -90,15 +91,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   slivers: [
                     SliverAppBar(
                       toolbarHeight: 65,
+                      backgroundColor: Colors.transparent,
                       automaticallyImplyLeading: false,
                       title: CustomSearchBar(
                           focusNode: focusNode, isFocused: isFocused),
                     ),
                     SliverFillRemaining(
                         child: isFocused || queryProvider.query.isNotEmpty
-                            ? _buildListOfApps(
-                                apps,
-                                settings,
+                            ? Padding(
+                                padding: const EdgeInsets.all(8),
+                                child: _buildListOfApps(
+                                  apps,
+                                  settings,
+                                ),
                               )
                             : ClockWidget()),
                   ],
@@ -120,79 +125,72 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             app.name.toLowerCase().contains(queryProvider.query.toLowerCase()))
         .toList();
 
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: filteredApps.isEmpty
-          ? Align(
-              alignment: Alignment.topCenter,
-              child: Text("No apps found for term '${queryProvider.query}'"))
-          : GridView.count(
-              crossAxisCount: 5,
-              crossAxisSpacing: 8,
-              mainAxisSpacing: 16,
-              children: [
-                for (var app in filteredApps)
-                  AppLauncher(
-                    app: app,
-                    launcherType: LauncherType.iconAndText,
-                    iconSize: settings.iconScale,
-                  ),
-              ],
-            ),
+    return DecoratedBox(
+      decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: BorderRadius.circular(25)),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8),
+        child: filteredApps.isEmpty
+            ? Align(
+                alignment: Alignment.topCenter,
+                child: Text("No apps found for term '${queryProvider.query}'"))
+            : GridView.count(
+                crossAxisCount: 5,
+                crossAxisSpacing: 8,
+                mainAxisSpacing: 16,
+                children: [
+                  for (var app in filteredApps)
+                    AppLauncher(
+                      app: app,
+                      launcherType: LauncherType.iconAndText,
+                      iconSize: settings.iconScale,
+                    ),
+                ],
+              ),
+      ),
     );
   }
 
   Widget _buildFavouritesRow(List<AppInfo> apps, SettingsNotifier settings) {
-    return BottomSheet(
-        enableDrag: false,
-        shadowColor: Colors.black,
-        backgroundColor: Colors.transparent,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(12.0)),
-        ),
-        onClosing: () {},
-        builder: (context) {
-          return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16.0),
-              child: Consumer(builder: (context, ref, child) {
-                List<String> favourites =
-                    ref.watch(favouritesProvider).favourites;
-                List<AppInfo> favouriteApps = apps
-                    .where((app) => favourites.contains(app.packageName))
-                    .toList();
+    return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16.0),
+        child: Consumer(builder: (context, ref, child) {
+          List<String> favourites = ref.watch(favouritesProvider).favourites;
+          List<AppInfo> favouriteApps = apps
+              .where((app) => favourites.contains(app.packageName))
+              .toList();
 
-                return LayoutBuilder(
-                  builder: (context, constraints) {
-                    final children = favouriteApps.reversed
-                        .map((app) => Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 4.0),
-                              child: AppLauncher(
-                                app: app,
-                                launcherType: LauncherType.iconOnly,
-                                iconSize: settings.iconScale,
-                              ),
-                            ))
-                        .toList();
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              final children = favouriteApps.reversed
+                  .map((app) => Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                        child: AppLauncher(
+                          app: app,
+                          launcherType: LauncherType.iconOnly,
+                          iconSize: settings.iconScale,
+                        ),
+                      ))
+                  .toList();
 
-                    if (favouriteApps.length * (settings.iconScale + 8) <=
-                        constraints.maxWidth) {
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: children,
-                      );
-                    }
-
-                    return SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: Row(
-                        children: children,
-                      ),
-                    );
-                  },
+              if (favouriteApps.length * (settings.iconScale + 8) <=
+                  constraints.maxWidth) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: children,
                 );
-              }));
-        });
+              }
+
+              return SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Row(
+                  children: children,
+                ),
+              );
+            },
+          );
+        }));
   }
 }

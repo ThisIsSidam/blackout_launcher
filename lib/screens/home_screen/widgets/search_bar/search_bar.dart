@@ -30,7 +30,9 @@ class CustomSearchBar extends HookConsumerWidget {
       padding: const EdgeInsets.only(top: 16.0),
       child: DecoratedBox(
         decoration: BoxDecoration(
-          color: isFocused ? Colors.white10 : Colors.transparent,
+          color: isFocused || queryProvider.query.isNotEmpty
+              ? Theme.of(context).colorScheme.surface
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(25),
         ),
         child: TextField(
