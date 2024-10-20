@@ -6,8 +6,6 @@ class SearchQueryNotifier extends ChangeNotifier {
 
   String get query => _query;
 
-  bool get isEmpty => _query == '';
-
   void setQuery(String query) {
     _query = query;
     notifyListeners();

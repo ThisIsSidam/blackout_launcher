@@ -95,12 +95,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           focusNode: focusNode, isFocused: isFocused),
                     ),
                     SliverFillRemaining(
-                        child: queryProvider.isEmpty
-                            ? ClockWidget()
-                            : _buildListOfApps(
+                        child: isFocused || queryProvider.query.isNotEmpty
+                            ? _buildListOfApps(
                                 apps,
                                 settings,
-                              )),
+                              )
+                            : ClockWidget()),
                   ],
                 ),
                 bottomSheet: _buildFavouritesRow(apps, settings),
