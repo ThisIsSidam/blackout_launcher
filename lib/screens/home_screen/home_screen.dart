@@ -2,10 +2,10 @@ import 'package:blackout_launcher/screens/home_screen/providers/search_query_pro
 import 'package:blackout_launcher/screens/home_screen/widgets/clock.dart';
 import 'package:blackout_launcher/screens/home_screen/widgets/home_drawer.dart';
 import 'package:blackout_launcher/screens/home_screen/widgets/search_bar/search_bar.dart';
+import 'package:blackout_launcher/screens/home_screen/widgets/search_results/search_results.dart';
 import 'package:blackout_launcher/screens/home_screen/widgets/swipe_detector.dart';
 import 'package:blackout_launcher/shared/async_widget/async_widget.dart';
 import 'package:blackout_launcher/shared/providers/apps_provider.dart';
-import 'package:blackout_launcher/shared/providers/hidden_apps_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:installed_apps/app_info.dart';
@@ -70,91 +70,53 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return PopScope(
       canPop: false,
       child: SwipeDetector(
-        onSwipeRight: () {
-          _performSwipeAction(settings.rightSwipeGestureAction, isRight: true);
-        },
-        onSwipeLeft: () {
-          _performSwipeAction(settings.leftSwipeGestureAction, isRight: false);
-        },
-        onSwipeDownwards: () {
-          focusNode.requestFocus();
-        },
-        child: AsyncValueWidget(
-            value: ref.watch(appListProvider),
-            data: (apps) {
-              return Scaffold(
-                backgroundColor: Colors.transparent,
-                key: _scaffoldKey,
-                resizeToAvoidBottomInset: true,
-                drawer: const HomeDrawer(),
-                body: Column(
-                  children: [
-                    Expanded(
-                      child: CustomScrollView(
-                        slivers: [
-                          SliverAppBar(
-                            toolbarHeight: 65,
-                            backgroundColor: Colors.transparent,
-                            automaticallyImplyLeading: false,
-                            title: CustomSearchBar(
-                                focusNode: focusNode, isFocused: isFocused),
-                          ),
-                          SliverFillRemaining(
-                              child: isFocused || queryProvider.query.isNotEmpty
-                                  ? Padding(
-                                      padding: const EdgeInsets.all(8),
-                                      child: _buildListOfApps(
-                                        apps,
-                                        settings,
-                                      ),
-                                    )
-                                  : ClockWidget()),
-                        ],
+          onSwipeRight: () {
+            _performSwipeAction(settings.rightSwipeGestureAction,
+                isRight: true);
+          },
+          onSwipeLeft: () {
+            _performSwipeAction(settings.leftSwipeGestureAction,
+                isRight: false);
+          },
+          onSwipeDownwards: () {
+            focusNode.requestFocus();
+          },
+          child: Scaffold(
+            backgroundColor: Colors.transparent,
+            key: _scaffoldKey,
+            resizeToAvoidBottomInset: true,
+            drawer: const HomeDrawer(),
+            body: AsyncValueWidget(
+                value: ref.watch(appListProvider),
+                data: (apps) {
+                  return Column(
+                    children: [
+                      Expanded(
+                        child: CustomScrollView(
+                          slivers: [
+                            SliverAppBar(
+                              toolbarHeight: 65,
+                              backgroundColor: Colors.transparent,
+                              automaticallyImplyLeading: false,
+                              title: CustomSearchBar(
+                                  focusNode: focusNode, isFocused: isFocused),
+                            ),
+                            SliverFillRemaining(
+                                child:
+                                    isFocused || queryProvider.query.isNotEmpty
+                                        ? const Padding(
+                                            padding: EdgeInsets.all(8),
+                                            child: SearchResults(),
+                                          )
+                                        : const ClockWidget()),
+                          ],
+                        ),
                       ),
-                    ),
-                    _buildFavouritesRow(apps, settings),
-                  ],
-                ),
-              );
-            }),
-      ),
-    );
-  }
-
-  Widget _buildListOfApps(List<AppInfo> allApps, SettingsNotifier settings) {
-    final queryProvider = ref.watch(searchQueryProvider);
-    final hiddenApps = ref.watch(hiddenAppsProvider).hiddenApps;
-    final apps = allApps.where((app) => !hiddenApps.contains(app.packageName));
-
-    final List<AppInfo> filteredApps = apps
-        .where((app) =>
-            app.name.toLowerCase().contains(queryProvider.query.toLowerCase()))
-        .toList();
-
-    return DecoratedBox(
-      decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(25)),
-      child: Padding(
-        padding: const EdgeInsets.all(8),
-        child: filteredApps.isEmpty
-            ? Align(
-                alignment: Alignment.topCenter,
-                child: Text("No apps found for term '${queryProvider.query}'"))
-            : GridView.count(
-                crossAxisCount: 5,
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 16,
-                children: [
-                  for (var app in filteredApps)
-                    AppLauncher(
-                      app: app,
-                      launcherType: LauncherType.iconAndText,
-                      iconSize: settings.iconScale,
-                    ),
-                ],
-              ),
-      ),
+                      _buildFavouritesRow(apps, settings),
+                    ],
+                  );
+                }),
+          )),
     );
   }
 

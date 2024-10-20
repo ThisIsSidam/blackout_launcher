@@ -19,7 +19,6 @@ class NotesSection extends HookConsumerWidget {
         body: CustomScrollView(
           slivers: [
             SliverAppBar(
-              toolbarHeight: 35,
               automaticallyImplyLeading: false,
               title: Text(
                 'Notes',
