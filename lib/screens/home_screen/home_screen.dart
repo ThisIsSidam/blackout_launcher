@@ -12,6 +12,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:installed_apps/app_info.dart';
 import 'package:installed_apps/installed_apps.dart';
 
+import '../../constants/enums/dock_styles.dart';
 import '../../constants/enums/swipe_gestures.dart';
 import '../../shared/providers/user_settings_provider.dart';
 import '../favourite_screen/providers/favourites_provider.dart';
@@ -116,8 +117,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Widget _buildDock(List<AppInfo> apps, SettingsNotifier settings) {
+    final dockStyle = settings.dockStyle;
     return Padding(
-        padding: const EdgeInsets.all(8),
+        padding: EdgeInsets.all(dockStyle == DockStyle.floating ? 8 : 0),
         child: Consumer(builder: (context, ref, child) {
           List<String> favourites = ref.watch(favouritesProvider).favourites;
           List<AppInfo> favouriteApps = apps
@@ -128,14 +130,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
           return DecoratedBox(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(25),
+              borderRadius: dockStyle == DockStyle.floating
+                  ? BorderRadius.circular(25)
+                  : dockStyle == DockStyle.roundedEdgeSnap
+                      ? BorderRadius.vertical(top: Radius.circular(25))
+                      : BorderRadius.circular(0), // Last is DockStyle.edgeSnap
               color: Theme.of(context)
                   .colorScheme
                   .surface
                   .withOpacity(settings.dockOpacity),
             ),
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: EdgeInsets.all(8),
               child: LayoutBuilder(
                 builder: (context, constraints) {
                   final children = favouriteApps.reversed

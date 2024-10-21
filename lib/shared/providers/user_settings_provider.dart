@@ -2,6 +2,7 @@ import 'package:blackout_launcher/database/user_settings_db.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../constants/enums/dock_styles.dart';
 import '../../constants/enums/swipe_gestures.dart';
 
 class SettingsNotifier extends ChangeNotifier {
@@ -138,6 +139,19 @@ class SettingsNotifier extends ChangeNotifier {
 
   set enableDock(bool value) {
     UserSettingsDB.setUserSetting('enableDock', value);
+    notifyListeners();
+  }
+
+  DockStyle get dockStyle {
+    final dynamic value = UserSettingsDB.getUserSetting('dockStyle');
+    if (value == null || value is! String) {
+      return DockStyle.floating;
+    }
+    return DockStyle.fromString(value);
+  }
+
+  set dockStyle(DockStyle value) {
+    UserSettingsDB.setUserSetting('dockStyle', value.toString());
     notifyListeners();
   }
 }
