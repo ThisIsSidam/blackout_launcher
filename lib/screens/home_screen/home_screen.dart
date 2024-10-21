@@ -1,4 +1,3 @@
-import 'package:blackout_launcher/screens/home_screen/providers/search_query_provider.dart';
 import 'package:blackout_launcher/screens/home_screen/providers/show_result_provider.dart';
 import 'package:blackout_launcher/screens/home_screen/widgets/clock.dart';
 import 'package:blackout_launcher/screens/home_screen/widgets/dock/dock.dart';
@@ -54,7 +53,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final settings = ref.watch(userSettingProvider);
-    final queryProvider = ref.watch(searchQueryProvider);
     final showResProvider = ref.watch(showResultsProvider.notifier);
     final showResults = ref.watch(showResultsProvider);
 

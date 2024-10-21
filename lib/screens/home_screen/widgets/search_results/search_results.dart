@@ -16,10 +16,7 @@ class SearchResults extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     print('searchResult built');
     final hiddenApps = ref.watch(hiddenAppsProvider).hiddenApps;
-
-    // Most providers are on read mode because this widget is a child of HomeScree
-    // and [HomeScreen] has these on watch mode.
-    final settings = ref.read(userSettingProvider);
+    final settings = ref.watch(userSettingProvider);
     final queryProvider = ref.watch(searchQueryProvider);
     return AsyncValueWidget<List<AppInfo>>(
         value: ref.read(appListProvider),
