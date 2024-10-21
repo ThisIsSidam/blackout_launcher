@@ -10,11 +10,9 @@ class UserPreferencesSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 16.0,
-          ),
-          child: Text(
+        ListTile(
+          leading: const SizedBox.shrink(),
+          title: Text(
             "User Preferences",
             style:
                 Theme.of(context).textTheme.titleSmall!.copyWith(fontSize: 12),
@@ -50,20 +48,31 @@ class UserPreferencesSection extends StatelessWidget {
 
   Widget _buildIconScaleTile(BuildContext context) {
     return ListTile(
+      leading: const SizedBox.shrink(),
       title: Text('Icon Size', style: Theme.of(context).textTheme.titleSmall),
       subtitle: Consumer(builder: (context, ref, child) {
-        final userSettingsProvider = ref.watch(userSettingProvider);
+        final settings = ref.watch(userSettingProvider);
         final List<double> scaleValues = [32, 40, 48, 56, 64];
-        return Slider(
-          value: userSettingsProvider.iconSize,
-          min: scaleValues.first,
-          max: scaleValues.last,
-          divisions: scaleValues.length - 1,
-          onChanged: (value) {
-            userSettingsProvider.iconSize = value;
-          },
-          activeColor: Theme.of(context).colorScheme.primary,
-          inactiveColor: Theme.of(context).colorScheme.secondary,
+        return Row(
+          children: [
+            Expanded(
+              child: Slider(
+                value: settings.iconSize,
+                min: scaleValues.first,
+                max: scaleValues.last,
+                divisions: scaleValues.length - 1,
+                onChanged: (value) {
+                  settings.iconSize = value;
+                },
+                activeColor: Theme.of(context).colorScheme.primary,
+                inactiveColor: Theme.of(context).colorScheme.secondary,
+              ),
+            ),
+            Text(
+              '${settings.iconSize.toInt()}',
+              style: Theme.of(context).textTheme.titleSmall,
+            )
+          ],
         );
       }),
     );
@@ -71,21 +80,32 @@ class UserPreferencesSection extends StatelessWidget {
 
   Widget _buildColumnNumberTile(BuildContext context) {
     return ListTile(
+      leading: const SizedBox.shrink(),
       title: Text('Number of Columns',
           style: Theme.of(context).textTheme.titleSmall),
       subtitle: Consumer(builder: (context, ref, child) {
         final userSettingsProvider = ref.watch(userSettingProvider);
         final List<double> values = [3, 4, 5, 6, 7, 8];
-        return Slider(
-          value: userSettingsProvider.numberOfColumns,
-          min: values.first,
-          max: values.last,
-          divisions: values.length - 1,
-          onChanged: (value) {
-            userSettingsProvider.numberOfColumns = value;
-          },
-          activeColor: Theme.of(context).colorScheme.primary,
-          inactiveColor: Theme.of(context).colorScheme.secondary,
+        return Row(
+          children: [
+            Expanded(
+              child: Slider(
+                value: userSettingsProvider.numberOfColumns,
+                min: values.first,
+                max: values.last,
+                divisions: values.length - 1,
+                onChanged: (value) {
+                  userSettingsProvider.numberOfColumns = value;
+                },
+                activeColor: Theme.of(context).colorScheme.primary,
+                inactiveColor: Theme.of(context).colorScheme.secondary,
+              ),
+            ),
+            Text(
+              '${userSettingsProvider.numberOfColumns.toInt()}',
+              style: Theme.of(context).textTheme.titleSmall,
+            )
+          ],
         );
       }),
     );

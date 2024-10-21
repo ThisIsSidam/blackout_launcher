@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:installed_apps/app_info.dart';
 
-import '../../../constants/enums/swipe_gestures.dart';
+import '../../constants/enums/swipe_gestures.dart';
 
 class ShortcutsSection extends StatelessWidget {
   const ShortcutsSection({super.key});
@@ -14,11 +14,9 @@ class ShortcutsSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 16.0,
-          ),
-          child: Text(
+        ListTile(
+          leading: const SizedBox.shrink(),
+          title: Text(
             "Shortcuts",
             style:
                 Theme.of(context).textTheme.titleSmall!.copyWith(fontSize: 12),

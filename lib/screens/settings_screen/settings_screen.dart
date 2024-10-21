@@ -1,6 +1,6 @@
 import 'package:blackout_launcher/screens/settings_screen/dock_settings.dart';
-import 'package:blackout_launcher/screens/settings_screen/shortcuts_section/shortcuts_section.dart';
-import 'package:blackout_launcher/screens/settings_screen/user_preferences_section/user_pref_section.dart';
+import 'package:blackout_launcher/screens/settings_screen/shortcuts_section.dart';
+import 'package:blackout_launcher/screens/settings_screen/user_pref_section.dart';
 import 'package:blackout_launcher/shared/back_arrow.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -22,6 +22,7 @@ class SettingsScreen extends StatelessWidget {
             const UserPreferencesSection(),
             _buildDivider(context),
             const ShortcutsSection(),
+            _buildDivider(context),
             const DockSettings(),
             _buildVersionWidget(),
           ],

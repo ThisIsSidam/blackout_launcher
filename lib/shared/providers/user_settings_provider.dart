@@ -9,7 +9,7 @@ class SettingsNotifier extends ChangeNotifier {
   double get iconSize {
     final dynamic value = UserSettingsDB.getUserSetting('iconScale');
     if (value == null || value is! double) {
-      return 38.0; // Default Value
+      return 48.0; // Default Value
       // Should always be one of scaleValues from the settings
     }
     return value;
