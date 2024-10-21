@@ -70,9 +70,6 @@ class CustomSearchBar extends HookConsumerWidget {
             queryProvider.setQuery(value);
           },
           onTapOutside: (_) {
-            // We don't clear queryProvider here because the user may want to
-            // click on an app, clearing would remove search results.
-            controller.clear();
             focusNode.unfocus();
           },
         ),

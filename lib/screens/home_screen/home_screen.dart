@@ -69,6 +69,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     return PopScope(
       canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (isFocused) {
+          focusNode.unfocus();
+        }
+        if (_scaffoldKey.currentState!.isDrawerOpen) {
+          _scaffoldKey.currentState!.closeDrawer();
+        }
+      },
       child: SwipeDetector(
           onSwipeRight: () {
             _performSwipeAction(settings.rightSwipeGestureAction,
@@ -128,6 +136,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           List<AppInfo> favouriteApps = apps
               .where((app) => favourites.contains(app.packageName))
               .toList();
+
+          if (favouriteApps.isEmpty) return const SizedBox.shrink();
 
           return DecoratedBox(
             decoration: BoxDecoration(
