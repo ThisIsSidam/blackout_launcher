@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 class SwipeDetector extends StatelessWidget {
@@ -6,56 +7,61 @@ class SwipeDetector extends StatelessWidget {
   final VoidCallback? onSwipeRight;
   final VoidCallback? onSwipeUpwards;
   final VoidCallback? onSwipeDownwards;
+  final double velocityThreshold;
 
-  const SwipeDetector(
-      {super.key,
-      required this.child,
-      this.onSwipeLeft,
-      this.onSwipeRight,
-      this.onSwipeUpwards,
-      this.onSwipeDownwards});
+  const SwipeDetector({
+    super.key,
+    required this.child,
+    this.onSwipeLeft,
+    this.onSwipeRight,
+    this.onSwipeUpwards,
+    this.onSwipeDownwards,
+    this.velocityThreshold = 1000.0, // Adjust this value as needed
+  });
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-        onPanEnd: (details) {
-          // Constants for gesture detection
-          const double threshold = 1.0; // Horizontal vs vertical threshold
-          const double minimumVelocity =
-              300.0; // Minimum velocity to trigger gesture
+    return RawGestureDetector(
+      behavior: HitTestBehavior.translucent,
+      gestures: <Type, GestureRecognizerFactory>{
+        HorizontalDragGestureRecognizer: GestureRecognizerFactoryWithHandlers<
+            HorizontalDragGestureRecognizer>(
+          () => HorizontalDragGestureRecognizer(),
+          (HorizontalDragGestureRecognizer instance) {
+            instance.onEnd = (details) {
+              if (details.primaryVelocity == null) return;
+              if (details.primaryVelocity!.abs() < velocityThreshold) return;
 
-          // Get velocity components
-          final velocity = details.velocity.pixelsPerSecond;
-          final double vx = velocity.dx.abs();
-          final double vy = velocity.dy.abs();
-
-          // Helper function to determine if gesture is primarily horizontal
-          bool isHorizontalGesture() => vx > threshold * vy;
-
-          // Helper function to determine if gesture is primarily vertical
-          bool isVerticalGesture() => vy > threshold * vx;
-
-          // Only process gestures that exceed minimum velocity
-          if (vx > minimumVelocity || vy > minimumVelocity) {
-            if (isHorizontalGesture()) {
-              if (velocity.dx > 0) {
-                // Right swipe
+              if (details.primaryVelocity! > 0) {
+                print('right');
                 onSwipeRight?.call();
               } else {
-                // Left swipe
+                print('left');
                 onSwipeLeft?.call();
               }
-            } else if (isVerticalGesture()) {
-              if (velocity.dy < 0) {
-                // Upward swipe
-                onSwipeUpwards?.call();
-              } else {
-                // Downward swipe
+            };
+          },
+        ),
+        VerticalDragGestureRecognizer:
+            GestureRecognizerFactoryWithHandlers<VerticalDragGestureRecognizer>(
+          () => VerticalDragGestureRecognizer(),
+          (VerticalDragGestureRecognizer instance) {
+            instance.onEnd = (details) {
+              if (details.primaryVelocity == null) return;
+              if (details.primaryVelocity!.abs() < velocityThreshold) return;
+
+              if (details.primaryVelocity! > 0) {
+                print('down');
                 onSwipeDownwards?.call();
+              } else {
+                print('up');
+                onSwipeUpwards?.call();
               }
-            }
-          }
-        },
-        child: child);
+            };
+          },
+        ),
+      },
+      child: child,
+    );
   }
 }

@@ -99,26 +99,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 data: (apps) {
                   return Column(
                     children: [
+                      AppBar(
+                        backgroundColor: Colors.transparent,
+                        automaticallyImplyLeading: false,
+                        title: CustomSearchBar(
+                            focusNode: focusNode, isFocused: isFocused),
+                      ),
                       Expanded(
-                        child: CustomScrollView(
-                          slivers: [
-                            SliverAppBar(
-                              toolbarHeight: 65,
-                              backgroundColor: Colors.transparent,
-                              automaticallyImplyLeading: false,
-                              title: CustomSearchBar(
-                                  focusNode: focusNode, isFocused: isFocused),
-                            ),
-                            SliverFillRemaining(
-                                child:
-                                    isFocused || queryProvider.query.isNotEmpty
-                                        ? const Padding(
-                                            padding: EdgeInsets.all(8),
-                                            child: SearchResults(),
-                                          )
-                                        : const ClockWidget()),
-                          ],
-                        ),
+                        child: isFocused || queryProvider.query.isNotEmpty
+                            ? const Padding(
+                                padding: EdgeInsets.all(8),
+                                child: SearchResults(),
+                              )
+                            : const ClockWidget(),
                       ),
                       _buildFavouritesRow(apps, settings),
                     ],
