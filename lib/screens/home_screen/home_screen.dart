@@ -1,4 +1,5 @@
 import 'package:blackout_launcher/screens/home_screen/providers/search_query_provider.dart';
+import 'package:blackout_launcher/screens/home_screen/providers/show_result_provider.dart';
 import 'package:blackout_launcher/screens/home_screen/widgets/clock.dart';
 import 'package:blackout_launcher/screens/home_screen/widgets/home_drawer.dart';
 import 'package:blackout_launcher/screens/home_screen/widgets/search_bar/search_bar.dart';
@@ -26,21 +27,11 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late final FocusNode focusNode;
-  bool isFocused = false;
 
   @override
   void initState() {
     focusNode = FocusNode();
     super.initState();
-    focusNode.addListener(_handleFocusChange);
-  }
-
-  void _handleFocusChange() {
-    if (mounted) {
-      setState(() {
-        isFocused = focusNode.hasFocus;
-      });
-    }
   }
 
   @override
@@ -66,15 +57,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     final settings = ref.watch(userSettingProvider);
     final queryProvider = ref.watch(searchQueryProvider);
+    final showResProvider = ref.watch(showResultsProvider.notifier);
+    final showResults = ref.watch(showResultsProvider);
 
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) {
-        if (isFocused) {
-          focusNode.unfocus();
-        }
+        focusNode.unfocus();
         if (_scaffoldKey.currentState!.isDrawerOpen) {
           _scaffoldKey.currentState!.closeDrawer();
+        }
+        if (showResults) {
+          showResProvider.state = false;
         }
       },
       child: SwipeDetector(
@@ -88,6 +82,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           },
           onSwipeDownwards: () {
             focusNode.requestFocus();
+            showResProvider.state = true;
           },
           child: Scaffold(
             backgroundColor: Colors.transparent,
@@ -102,11 +97,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       AppBar(
                         backgroundColor: Colors.transparent,
                         automaticallyImplyLeading: false,
-                        title: CustomSearchBar(
-                            focusNode: focusNode, isFocused: isFocused),
+                        title: CustomSearchBar(focusNode: focusNode),
                       ),
                       Expanded(
-                        child: isFocused || queryProvider.query.isNotEmpty
+                        child: showResults
                             ? const Padding(
                                 padding: EdgeInsets.all(8),
                                 child: SearchResults(),
