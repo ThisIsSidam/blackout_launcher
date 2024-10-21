@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../../../router/app_router.dart';
 import '../../providers/search_query_provider.dart';
 
 class CustomSearchBar extends HookConsumerWidget {
@@ -49,7 +47,7 @@ class CustomSearchBar extends HookConsumerWidget {
             ),
             prefixIcon: const Icon(Icons.search),
             suffixIcon: InkWell(
-              onTap: () => context.go(AppRoute.settings.path),
+              onTap: () => Navigator.pushNamed(context, '/settings_screen'),
               child: const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 8),
                 child: Icon(Icons.menu, size: 20),

@@ -1,4 +1,7 @@
-import 'package:blackout_launcher/router/app_router.dart';
+import 'package:blackout_launcher/screens/favourite_screen/favourites_screen.dart';
+import 'package:blackout_launcher/screens/hidden_apps_screen/hidden_apps_screen.dart';
+import 'package:blackout_launcher/screens/home_screen/home_screen.dart';
+import 'package:blackout_launcher/screens/settings_screen/settings_screen.dart';
 import 'package:blackout_launcher/shared/providers/user_settings_provider.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +36,7 @@ class MyApp extends ConsumerWidget {
           brightness: Brightness.dark,
         );
       }
-      return MaterialApp.router(
+      return MaterialApp(
         theme: ThemeData(
           colorScheme: lightColorScheme,
           useMaterial3: true,
@@ -43,7 +46,13 @@ class MyApp extends ConsumerWidget {
           useMaterial3: true,
         ),
         themeMode: ThemeMode.system,
-        routerConfig: router,
+        home: const HomeScreen(),
+        routes: {
+          '/home_screen': (context) => const HomeScreen(),
+          '/settings_screen': (context) => const SettingsScreen(),
+          '/favourites_screen': (context) => const FavouritesScreen(),
+          '/hidden_apps_screen': (context) => const HiddenAppsScreen(),
+        },
       );
     });
   }

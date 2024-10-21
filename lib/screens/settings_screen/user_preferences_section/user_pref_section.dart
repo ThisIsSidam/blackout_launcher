@@ -1,9 +1,6 @@
 import 'package:blackout_launcher/shared/providers/user_settings_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-
-import '../../../router/app_router.dart';
 
 class UserPreferencesSection extends StatelessWidget {
   const UserPreferencesSection({super.key});
@@ -31,7 +28,7 @@ class UserPreferencesSection extends StatelessWidget {
             ),
             trailing: const Icon(Icons.chevron_right),
             onTap: () {
-              context.go(AppRoute.favourites.path);
+              Navigator.pushNamed(context, '/favourites_screen');
             }),
         ListTile(
             leading: const Icon(Icons.block),
@@ -41,7 +38,7 @@ class UserPreferencesSection extends StatelessWidget {
             ),
             trailing: const Icon(Icons.chevron_right),
             onTap: () {
-              context.go(AppRoute.hidden.path);
+              Navigator.pushNamed(context, '/hidden_apps_screen');
             }),
         _buildIconScaleTile(context),
         _buildStatusBarTile(context),
