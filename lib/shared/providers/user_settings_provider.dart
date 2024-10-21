@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../constants/enums/swipe_gestures.dart';
 
 class SettingsNotifier extends ChangeNotifier {
-  double get iconScale {
+  double get iconSize {
     final dynamic value = UserSettingsDB.getUserSetting('iconScale');
     if (value == null || value is! double) {
       return 38.0; // Default Value
@@ -14,8 +14,21 @@ class SettingsNotifier extends ChangeNotifier {
     return value;
   }
 
-  set iconScale(double value) {
+  set iconSize(double value) {
     UserSettingsDB.setUserSetting('iconScale', value);
+    notifyListeners();
+  }
+
+  double get numberOfColumns {
+    final dynamic value = UserSettingsDB.getUserSetting('numberOfColumns');
+    if (value == null || value is! double) {
+      return 5;
+    }
+    return value;
+  }
+
+  set numberOfColumns(double value) {
+    UserSettingsDB.setUserSetting('numberOfColumns', value);
     notifyListeners();
   }
 

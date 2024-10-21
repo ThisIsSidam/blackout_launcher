@@ -54,7 +54,7 @@ class SearchResults extends ConsumerWidget {
       child: Padding(
         padding: const EdgeInsets.all(8),
         child: filteredApps.isEmpty
-            ? SizedBox(
+            ? const SizedBox(
                 height: 45,
                 child: Align(
                     alignment: Alignment.centerLeft,
@@ -64,7 +64,7 @@ class SearchResults extends ConsumerWidget {
                     )),
               )
             : GridView.count(
-                crossAxisCount: 5,
+                crossAxisCount: settings.numberOfColumns.toInt(),
                 crossAxisSpacing: 8,
                 mainAxisSpacing: 16,
                 children: [
@@ -72,7 +72,7 @@ class SearchResults extends ConsumerWidget {
                     AppLauncher(
                       app: app,
                       launcherType: LauncherType.iconAndText,
-                      iconSize: settings.iconScale,
+                      iconSize: settings.iconSize,
                     ),
                 ],
               ),

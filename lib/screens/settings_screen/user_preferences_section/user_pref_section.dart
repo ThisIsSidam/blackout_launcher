@@ -41,6 +41,7 @@ class UserPreferencesSection extends StatelessWidget {
               Navigator.pushNamed(context, '/hidden_apps_screen');
             }),
         _buildIconScaleTile(context),
+        _buildColumnNumberTile(context),
         _buildStatusBarTile(context),
         _buildNavigationBarTile(context)
       ],
@@ -49,50 +50,44 @@ class UserPreferencesSection extends StatelessWidget {
 
   Widget _buildIconScaleTile(BuildContext context) {
     return ListTile(
-      leading: const Icon(Icons.signal_cellular_4_bar_sharp,
-          color: Colors.transparent),
       title: Text('Icon Size', style: Theme.of(context).textTheme.titleSmall),
-      subtitle: Row(
-        children: [
-          const Text('A', style: TextStyle(color: Colors.white)),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Consumer(builder: (context, ref, child) {
-              final userSettingsProvider = ref.watch(userSettingProvider);
-              final List<double> scaleValues = [34, 40, 46, 52, 58, 64];
-              return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: List.generate(
-                      scaleValues.length,
-                      (index) => Flexible(
-                            child: TextButton(
-                              onPressed: () {
-                                userSettingsProvider.iconScale =
-                                    scaleValues[index];
-                              },
-                              child: SizedBox(
-                                width: scaleValues[index] / 3,
-                                height: scaleValues[index] / 3,
-                                child: DecoratedBox(
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: userSettingsProvider.iconScale ==
-                                            scaleValues[index]
-                                        ? Theme.of(context).colorScheme.primary
-                                        : Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          )));
-            }),
-          ),
-          const SizedBox(width: 10),
-          const Text('A', style: TextStyle(color: Colors.white, fontSize: 24)),
-        ],
-      ),
+      subtitle: Consumer(builder: (context, ref, child) {
+        final userSettingsProvider = ref.watch(userSettingProvider);
+        final List<double> scaleValues = [32, 40, 48, 56, 64];
+        return Slider(
+          value: userSettingsProvider.iconSize,
+          min: scaleValues.first,
+          max: scaleValues.last,
+          divisions: scaleValues.length - 1,
+          onChanged: (value) {
+            userSettingsProvider.iconSize = value;
+          },
+          activeColor: Theme.of(context).colorScheme.primary,
+          inactiveColor: Theme.of(context).colorScheme.secondary,
+        );
+      }),
+    );
+  }
+
+  Widget _buildColumnNumberTile(BuildContext context) {
+    return ListTile(
+      title: Text('Number of Columns',
+          style: Theme.of(context).textTheme.titleSmall),
+      subtitle: Consumer(builder: (context, ref, child) {
+        final userSettingsProvider = ref.watch(userSettingProvider);
+        final List<double> values = [3, 4, 5, 6, 7, 8];
+        return Slider(
+          value: userSettingsProvider.numberOfColumns,
+          min: values.first,
+          max: values.last,
+          divisions: values.length - 1,
+          onChanged: (value) {
+            userSettingsProvider.numberOfColumns = value;
+          },
+          activeColor: Theme.of(context).colorScheme.primary,
+          inactiveColor: Theme.of(context).colorScheme.secondary,
+        );
+      }),
     );
   }
 

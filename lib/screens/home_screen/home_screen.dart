@@ -154,12 +154,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             child: AppLauncher(
                               app: app,
                               launcherType: LauncherType.iconOnly,
-                              iconSize: settings.iconScale,
+                              iconSize: settings.iconSize,
                             ),
                           ))
                       .toList();
 
-                  if (favouriteApps.length * (settings.iconScale + 8) <=
+                  if (favouriteApps.length * (settings.iconSize + 8) <=
                       constraints.maxWidth) {
                     return Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
