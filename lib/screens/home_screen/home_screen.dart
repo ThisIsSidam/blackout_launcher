@@ -107,7 +107,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               )
                             : const ClockWidget(),
                       ),
-                      _buildFavouritesRow(apps, settings),
+                      if (settings.enableDock) _buildDock(apps, settings),
                     ],
                   );
                 }),
@@ -115,7 +115,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _buildFavouritesRow(List<AppInfo> apps, SettingsNotifier settings) {
+  Widget _buildDock(List<AppInfo> apps, SettingsNotifier settings) {
     return Padding(
         padding: const EdgeInsets.all(8),
         child: Consumer(builder: (context, ref, child) {
@@ -128,8 +128,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
           return DecoratedBox(
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(25),
-                color: Theme.of(context).colorScheme.surface),
+              borderRadius: BorderRadius.circular(25),
+              color: Theme.of(context)
+                  .colorScheme
+                  .surface
+                  .withOpacity(settings.dockOpacity),
+            ),
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: LayoutBuilder(

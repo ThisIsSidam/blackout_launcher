@@ -111,6 +111,35 @@ class SettingsNotifier extends ChangeNotifier {
     UserSettingsDB.setUserSetting('leftSwipeOpenApp', packageName);
     notifyListeners();
   }
+
+  double get dockOpacity {
+    final dynamic value = UserSettingsDB.getUserSetting('dockOpacity');
+    if (value == null || value is! double) {
+      return 1.0;
+    }
+    if (value >= 0.0 && value <= 1.0) {
+      return value;
+    }
+    throw 'Dock opacity must be between 0.0 and 1.0';
+  }
+
+  set dockOpacity(double value) {
+    UserSettingsDB.setUserSetting('dockOpacity', value);
+    notifyListeners();
+  }
+
+  bool get enableDock {
+    final dynamic value = UserSettingsDB.getUserSetting('enableDock');
+    if (value == null || value is! bool) {
+      return true;
+    }
+    return value;
+  }
+
+  set enableDock(bool value) {
+    UserSettingsDB.setUserSetting('enableDock', value);
+    notifyListeners();
+  }
 }
 
 final userSettingProvider = ChangeNotifierProvider<SettingsNotifier>(
