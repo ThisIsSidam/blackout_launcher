@@ -24,15 +24,17 @@ class NotesNotifier extends ChangeNotifier {
     super.dispose();
   }
 
-  void addNewNote(String text) {
+  /// Adds a new note in the list of notes (not in the database).
+  /// Returns a [FocusNode] for the note which the user can use to request focus.
+  /// Notes are added in the Database where text is entered in the note. This
+  /// happens using the [updateNote] method.
+  FocusNode addNewNote(String text) {
     final NoteModal note =
         NoteModal(id: DateTime.now().microsecondsSinceEpoch, text: text);
-    notes.insert(0, note);
-    notifyListeners();
+    notes.add(note);
 
-    // NotesDB.addData(note); is not called because it is removed if
-    // the note is empty. Adding text calls updateNote which then adds the
-    // note to the DB.
+    notifyListeners();
+    return getFocusNode(note.id);
   }
 
   void removeNote(NoteModal note) {
@@ -54,6 +56,15 @@ class NotesNotifier extends ChangeNotifier {
     }
     notes = [...notesArgument];
     notifyListeners();
+  }
+
+  FocusNode? getEmptyNoteFocusNode() {
+    for (final note in notes) {
+      if (note.isEmpty) {
+        return getFocusNode(note.id);
+      }
+    }
+    return null;
   }
 }
 

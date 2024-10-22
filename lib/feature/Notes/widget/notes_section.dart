@@ -85,7 +85,17 @@ class NotesSection extends HookConsumerWidget {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8))),
             onPressed: () {
-              ref.read(notesProvider).addNewNote('');
+              final notesNotifier = ref.read(notesProvider);
+              // Check if one of the notes is empty or not. If yes, focus it,
+              // rather than adding a new one.
+              FocusNode? emptyNoteNode = notesNotifier.getEmptyNoteFocusNode();
+              if (emptyNoteNode != null) {
+                emptyNoteNode.requestFocus();
+                return;
+              }
+
+              FocusNode newNoteNode = notesNotifier.addNewNote('');
+              newNoteNode.requestFocus();
             },
             icon: Icon(
               Icons.add,
