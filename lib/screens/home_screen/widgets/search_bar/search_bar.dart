@@ -7,15 +7,16 @@ import '../../providers/search_query_provider.dart';
 
 class CustomSearchBar extends HookConsumerWidget {
   final FocusNode focusNode;
+  final TextEditingController controller;
 
   const CustomSearchBar({
     Key? key,
     required this.focusNode,
+    required this.controller,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final controller = useTextEditingController();
     final queryProvider = ref.read(searchQueryProvider);
 
     return Padding(

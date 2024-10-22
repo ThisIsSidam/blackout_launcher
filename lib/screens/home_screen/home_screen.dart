@@ -24,16 +24,19 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late final FocusNode focusNode;
+  late final TextEditingController searchController;
 
   @override
   void initState() {
     focusNode = FocusNode();
+    searchController = TextEditingController();
     super.initState();
   }
 
   @override
   void dispose() {
     focusNode.dispose();
+    searchController.dispose();
     super.dispose();
   }
 
@@ -60,6 +63,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       canPop: false,
       onPopInvokedWithResult: (didPop, _) {
         focusNode.unfocus();
+        searchController.clear();
         if (_scaffoldKey.currentState!.isDrawerOpen) {
           _scaffoldKey.currentState!.closeDrawer();
         }
@@ -93,7 +97,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       AppBar(
                         backgroundColor: Colors.transparent,
                         automaticallyImplyLeading: false,
-                        title: CustomSearchBar(focusNode: focusNode),
+                        title: CustomSearchBar(
+                            focusNode: focusNode, controller: searchController),
                       ),
                       Expanded(
                         child: showResults
