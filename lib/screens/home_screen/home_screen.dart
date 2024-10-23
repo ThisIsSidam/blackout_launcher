@@ -95,6 +95,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   return Column(
                     children: [
                       AppBar(
+                        toolbarHeight: 65,
                         backgroundColor: Colors.transparent,
                         automaticallyImplyLeading: false,
                         title: CustomSearchBar(
