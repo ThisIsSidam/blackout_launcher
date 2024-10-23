@@ -1,3 +1,4 @@
+import 'package:blackout_launcher/constants/enums/app_sort_method.dart';
 import 'package:blackout_launcher/database/user_settings_db.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -152,6 +153,19 @@ class SettingsNotifier extends ChangeNotifier {
 
   set dockStyle(DockStyle value) {
     UserSettingsDB.setUserSetting('dockStyle', value.toString());
+    notifyListeners();
+  }
+
+  AppSortMethod get appSortMethod {
+    final dynamic value = UserSettingsDB.getUserSetting('appSortMethod');
+    if (value == null || value is! String) {
+      return AppSortMethod.alphabetical;
+    }
+    return AppSortMethod.fromString(value);
+  }
+
+  set appSortMethod(AppSortMethod value) {
+    UserSettingsDB.setUserSetting('appSortMethod', value.toString());
     notifyListeners();
   }
 }

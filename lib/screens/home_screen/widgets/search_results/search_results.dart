@@ -1,3 +1,4 @@
+import 'package:blackout_launcher/constants/enums/app_sort_method.dart';
 import 'package:blackout_launcher/shared/app_info_plus.dart';
 import 'package:blackout_launcher/shared/async_widget/async_widget.dart';
 import 'package:blackout_launcher/shared/providers/apps_provider.dart';
@@ -68,17 +69,14 @@ class SearchResults extends ConsumerWidget {
     final settings = ref.read(userSettingProvider);
     final query = ref.read(searchQueryProvider).query;
 
+    // Filter apps based on search query
     final List<AppInfo> filteredApps = apps
         .where((app) => app.name.toLowerCase().contains(query.toLowerCase()))
         .toList();
-    print('before sort');
-    for (var app in filteredApps) {
-      print('${app.name} ${app.launchData.length}');
-    }
-    filteredApps.sort((a, b) => a.compareTo(b));
-    print('after sort');
-    for (var app in filteredApps) {
-      print('${app.name} ${app.launchData.length}');
+
+    // Sort by usage if usage sort setting is chosen
+    if (settings.appSortMethod == AppSortMethod.usage) {
+      filteredApps.sort((a, b) => a.compareTo(b));
     }
 
     return DecoratedBox(

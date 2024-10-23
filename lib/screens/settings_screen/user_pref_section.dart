@@ -1,3 +1,4 @@
+import 'package:blackout_launcher/constants/enums/app_sort_method.dart';
 import 'package:blackout_launcher/shared/providers/user_settings_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -41,7 +42,8 @@ class UserPreferencesSection extends StatelessWidget {
         _buildIconScaleTile(context),
         _buildColumnNumberTile(context),
         _buildStatusBarTile(context),
-        _buildNavigationBarTile(context)
+        _buildNavigationBarTile(context),
+        _buildAppSortTile(context)
       ],
     );
   }
@@ -146,5 +148,38 @@ class UserPreferencesSection extends StatelessWidget {
                 userSetting.hideNavigationBar = val;
               });
         }));
+  }
+
+  Widget _buildAppSortTile(BuildContext context) {
+    return Consumer(builder: (context, ref, child) {
+      final userSettings = ref.watch(userSettingProvider);
+      return MenuAnchor(
+        builder: (context, controller, child) {
+          return ListTile(
+            leading: const Icon(
+              Icons.swipe_left,
+              color: Colors.transparent,
+            ),
+            title: Text('Order of search results',
+                style: Theme.of(context).textTheme.titleSmall),
+            subtitle: Text(
+              userSettings.appSortMethod.toString(),
+            ),
+            onTap: () {
+              controller.open();
+            },
+          );
+        },
+        menuChildren: [
+          for (AppSortMethod method in AppSortMethod.values)
+            MenuItemButton(
+              child: Text(method.toString()),
+              onPressed: () {
+                userSettings.appSortMethod = method;
+              },
+            )
+        ],
+      );
+    });
   }
 }
