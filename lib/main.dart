@@ -13,6 +13,7 @@ Future<void> main() async {
   await Hive.openBox(HiveBoxNames.appCategories.name);
   await Hive.openBox(HiveBoxNames.notes.name);
   await Hive.openBox(HiveBoxNames.userSettings.name);
+  await Hive.openBox(HiveBoxNames.appLaunchData.name);
 
   runApp(const ProviderScope(child: MyApp()));
 }

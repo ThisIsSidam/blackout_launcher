@@ -60,7 +60,14 @@ class AppLauncher extends ConsumerWidget {
           }
 
           return GestureDetector(
-            onTap: () => InstalledApps.startApp(app.packageName),
+            onTap: () async {
+              final bool? launchSuccess =
+                  await InstalledApps.startApp(app.packageName);
+              if (launchSuccess != null && launchSuccess) {
+                print('app launched');
+                app.addLaunchData();
+              }
+            },
             onLongPress: () {
               if (controller.isOpen) {
                 controller.close();
