@@ -75,6 +75,16 @@ class SettingsScreen extends StatelessWidget {
               subtitle: Text('Left Swipe Gesture, Right Swipe Gesture...',
                   style: Theme.of(context).textTheme.bodyMedium),
             ),
+            ListTile(
+              leading: Icon(Icons.gesture),
+              title: Text("Search",
+                  style: Theme.of(context).textTheme.titleMedium),
+              onTap: () {
+                Navigator.pushNamed(context, '/search_settings');
+              },
+              subtitle: Text('Show favourites, calculator',
+                  style: Theme.of(context).textTheme.bodyMedium),
+            ),
           ],
         )));
   }

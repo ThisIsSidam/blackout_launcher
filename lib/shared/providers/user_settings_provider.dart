@@ -168,6 +168,20 @@ class SettingsNotifier extends ChangeNotifier {
     UserSettingsDB.setUserSetting('appSortMethod', value.toString());
     notifyListeners();
   }
+
+  bool get isTopDownSearchArrangement {
+    final dynamic value =
+        UserSettingsDB.getUserSetting('isTopDownSearchArrangement');
+    if (value == null || value is! bool) {
+      return true;
+    }
+    return value;
+  }
+
+  set isTopDownSearchArrangement(bool value) {
+    UserSettingsDB.setUserSetting('isTopDownSearchArrangement', value);
+    notifyListeners();
+  }
 }
 
 final userSettingProvider = ChangeNotifierProvider<SettingsNotifier>(

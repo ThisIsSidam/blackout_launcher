@@ -4,6 +4,7 @@ import 'package:blackout_launcher/screens/settings_screen/sub_screens/favourites
 import 'package:blackout_launcher/screens/settings_screen/sub_screens/gesture_settings.dart';
 import 'package:blackout_launcher/screens/settings_screen/sub_screens/hidden_apps_screen.dart';
 import 'package:blackout_launcher/screens/settings_screen/sub_screens/home_screen_settings/home_screen_settings.dart';
+import 'package:blackout_launcher/screens/settings_screen/sub_screens/search_settings.dart';
 import 'package:blackout_launcher/screens/settings_screen/sub_screens/user_prefs_settings.dart';
 import 'package:blackout_launcher/shared/providers/user_settings_provider.dart';
 import 'package:dynamic_color/dynamic_color.dart';
@@ -57,7 +58,8 @@ class MyApp extends ConsumerWidget {
           '/hidden_apps_screen': (context) => const HiddenAppsScreen(),
           '/user_pref_settings': (context) => const UserPreferencesScreen(),
           '/gesture_settings': (context) => const GestureSettings(),
-          '/home_screen_settings': (context) => const HomeScreenSettings()
+          '/home_screen_settings': (context) => const HomeScreenSettings(),
+          '/search_settings': (context) => const SearchSettings(),
         },
       );
     });

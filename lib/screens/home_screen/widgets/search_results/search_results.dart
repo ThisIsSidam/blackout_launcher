@@ -16,10 +16,9 @@ class SearchResults extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    print('searchResult built');
     final hiddenApps = ref.watch(hiddenAppsProvider).hiddenApps;
     final query = ref.watch(searchQueryProvider).query;
-
+    final settings = ref.watch(userSettingProvider);
     return AsyncValueWidget<List<AppInfo>>(
         value: ref.read(appListProvider),
         data: (allApps) {
@@ -30,12 +29,20 @@ class SearchResults extends ConsumerWidget {
           // Using a column because more types of results would be added.
           // Also the child normally took entire space which wasn't good.
           // With this it now takes only necessary space.
+          List<Widget> columnItems = [
+            _buildMathResult(context, query),
+            const SizedBox(height: 8),
+            Flexible(child: _buildResultApps(context, ref, apps)),
+          ];
+
           return Column(
-            children: [
-              _buildMathResult(context, query),
-              const SizedBox(height: 8),
-              Flexible(child: _buildResultApps(context, ref, apps)),
-            ],
+            mainAxisAlignment: settings.isTopDownSearchArrangement
+                ? MainAxisAlignment.start
+                : MainAxisAlignment.end,
+            mainAxisSize: MainAxisSize.min,
+            children: settings.isTopDownSearchArrangement
+                ? columnItems
+                : columnItems.reversed.toList(),
           );
         });
   }
@@ -96,6 +103,7 @@ class SearchResults extends ConsumerWidget {
                     )),
               )
             : GridView.count(
+                reverse: !settings.isTopDownSearchArrangement,
                 crossAxisCount: settings.numberOfColumns.toInt(),
                 crossAxisSpacing: 8,
                 mainAxisSpacing: 16,
