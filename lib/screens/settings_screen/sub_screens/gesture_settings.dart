@@ -14,19 +14,20 @@ class GestureSettings extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
           bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(kTextTabBarHeight),
+        preferredSize: const Size.fromHeight(kTextTabBarHeight + 50),
         child: Align(
           alignment: Alignment.centerLeft,
           child: Padding(
             padding: const EdgeInsets.only(left: 16.0),
-            child:
-                Text('Gestures', style: Theme.of(context).textTheme.titleLarge),
+            child: Text('Gestures',
+                style: Theme.of(context).textTheme.headlineLarge),
           ),
         ),
       )),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const SizedBox(height: 25),
           _buildRightSwipeTile(context),
           _buildLeftSwipeTile(context),
         ],
@@ -49,10 +50,10 @@ class GestureSettings extends StatelessWidget {
               Icons.swipe_right,
             ),
             title: Text('On right swipe',
-                style: Theme.of(context).textTheme.titleSmall),
+                style: Theme.of(context).textTheme.titleMedium),
             subtitle: Text(
               subtitle,
-              style: Theme.of(context).textTheme.bodySmall,
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
             onTap: () {
               controller.open();
@@ -107,10 +108,10 @@ class GestureSettings extends StatelessWidget {
               Icons.swipe_left,
             ),
             title: Text('On left swipe',
-                style: Theme.of(context).textTheme.titleSmall),
+                style: Theme.of(context).textTheme.titleMedium),
             subtitle: Text(
               subtitle,
-              style: Theme.of(context).textTheme.bodySmall,
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
             onTap: () {
               controller.open();

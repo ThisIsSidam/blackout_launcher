@@ -15,43 +15,48 @@ class HiddenAppsScreen extends ConsumerWidget {
     List<String> hiddenAppsPackageNames = hiddenNotifier.hiddenApps;
 
     return Scaffold(
-      appBar: AppBar(
+      body: CustomScrollView(slivers: [
+        SliverAppBar(
+          pinned: false,
           bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(kTextTabBarHeight),
-        child: Align(
-          alignment: Alignment.centerLeft,
-          child: Padding(
-            padding: const EdgeInsets.only(left: 16.0),
-            child: Text('Hidden Apps',
-                style: Theme.of(context).textTheme.titleLarge),
+            preferredSize: const Size.fromHeight(kTextTabBarHeight + 50),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 16.0),
+                child: Text('Hidden Apps',
+                    style: Theme.of(context).textTheme.headlineLarge),
+              ),
+            ),
           ),
         ),
-      )),
-      body: AsyncValueWidget<List<AppInfo>>(
-          value: ref.watch(appListProvider),
-          data: (apps) {
-            return ListView.separated(
-              itemCount: apps.length,
-              separatorBuilder: (context, index) => const SizedBox(height: 8),
-              itemBuilder: (context, index) {
-                final String packageName = apps[index].packageName;
-                return ListTile(
-                  leading: apps[index].getIconImage(),
-                  title: Text(apps[index].name),
-                  trailing: hiddenAppsPackageNames.contains(packageName)
-                      ? const Icon(Icons.remove_circle, color: Colors.red)
-                      : const Icon(Icons.remove_circle_outline),
-                  onTap: () {
-                    if (hiddenAppsPackageNames.contains(packageName)) {
-                      hiddenNotifier.removeApp(packageName);
-                    } else {
-                      hiddenNotifier.hideApp(packageName);
-                    }
+        AsyncValueWidget<List<AppInfo>>(
+            value: ref.watch(appListProvider),
+            data: (apps) {
+              return SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    final String packageName = apps[index].packageName;
+                    return ListTile(
+                      leading: apps[index].getIconImage(),
+                      title: Text(apps[index].name),
+                      trailing: hiddenAppsPackageNames.contains(packageName)
+                          ? const Icon(Icons.remove_circle, color: Colors.red)
+                          : const Icon(Icons.remove_circle_outline),
+                      onTap: () {
+                        if (hiddenAppsPackageNames.contains(packageName)) {
+                          hiddenNotifier.removeApp(packageName);
+                        } else {
+                          hiddenNotifier.hideApp(packageName);
+                        }
+                      },
+                    );
                   },
-                );
-              },
-            );
-          }),
+                  childCount: apps.length,
+                ),
+              );
+            }),
+      ]),
     );
   }
 }

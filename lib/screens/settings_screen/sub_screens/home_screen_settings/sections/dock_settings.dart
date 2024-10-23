@@ -15,15 +15,14 @@ class DockSettings extends StatelessWidget {
           leading: Icon(Icons.dark_mode, color: Colors.transparent),
           title: Text(
             "Dock",
-            style:
-                Theme.of(context).textTheme.titleSmall!.copyWith(fontSize: 12),
+            style: Theme.of(context).textTheme.titleSmall,
           ),
         ),
         ListTile(
           leading: const Icon(Icons.favorite, color: Colors.transparent),
           title: Text(
             'Enable Dock',
-            style: Theme.of(context).textTheme.titleSmall,
+            style: Theme.of(context).textTheme.titleMedium,
           ),
           trailing: Consumer(builder: (context, ref, child) {
             final settings = ref.watch(userSettingProvider);
@@ -39,7 +38,7 @@ class DockSettings extends StatelessWidget {
           leading: const Icon(Icons.favorite, color: Colors.transparent),
           title: Text(
             'Opacity',
-            style: Theme.of(context).textTheme.titleSmall,
+            style: Theme.of(context).textTheme.titleMedium,
           ),
           subtitle: Consumer(builder: (context, ref, child) {
             final settings = ref.watch(userSettingProvider);
@@ -81,11 +80,9 @@ class DockSettings extends StatelessWidget {
               color: Colors.transparent,
             ),
             title: Text('DockStyle',
-                style: Theme.of(context).textTheme.titleSmall),
-            subtitle: Text(
-              userSettings.dockStyle.toString(),
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
+                style: Theme.of(context).textTheme.titleMedium),
+            subtitle: Text(userSettings.dockStyle.toString(),
+                style: Theme.of(context).textTheme.bodyMedium),
             onTap: () {
               controller.open();
             },

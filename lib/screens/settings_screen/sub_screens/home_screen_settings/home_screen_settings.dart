@@ -10,18 +10,19 @@ class HomeScreenSettings extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
           bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(kTextTabBarHeight),
+        preferredSize: const Size.fromHeight(kTextTabBarHeight + 50),
         child: Align(
           alignment: Alignment.centerLeft,
           child: Padding(
             padding: const EdgeInsets.only(left: 16.0),
             child: Text('Home Screen',
-                style: Theme.of(context).textTheme.titleLarge),
+                style: Theme.of(context).textTheme.headlineLarge),
           ),
         ),
       )),
       body: Column(
         children: [
+          const SizedBox(height: 25),
           const DockSettings(),
           _buildDivider(context),
           const SystemBarsSettings()

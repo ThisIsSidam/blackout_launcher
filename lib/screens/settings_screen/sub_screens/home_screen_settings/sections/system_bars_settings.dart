@@ -14,8 +14,7 @@ class SystemBarsSettings extends StatelessWidget {
           leading: Icon(Icons.dark_mode, color: Colors.transparent),
           title: Text(
             "System Bars",
-            style:
-                Theme.of(context).textTheme.titleSmall!.copyWith(fontSize: 12),
+            style: Theme.of(context).textTheme.titleSmall,
           ),
         ),
         _buildNavigationBarTile(context),
@@ -29,7 +28,7 @@ class SystemBarsSettings extends StatelessWidget {
         leading:
             const Icon(Icons.assistant_navigation, color: Colors.transparent),
         title: Text('Hide status bar',
-            style: Theme.of(context).textTheme.titleSmall),
+            style: Theme.of(context).textTheme.titleMedium),
         trailing: Consumer(builder: (context, ref, child) {
           final userSetting = ref.watch(userSettingProvider);
 
@@ -48,7 +47,7 @@ class SystemBarsSettings extends StatelessWidget {
         leading:
             const Icon(Icons.assistant_navigation, color: Colors.transparent),
         title: Text('Hide navigation bar',
-            style: Theme.of(context).textTheme.titleSmall),
+            style: Theme.of(context).textTheme.titleMedium),
         trailing: Consumer(builder: (context, ref, child) {
           final userSetting = ref.watch(userSettingProvider);
 

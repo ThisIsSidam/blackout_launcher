@@ -11,19 +11,20 @@ class UserPreferencesScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
           bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(kTextTabBarHeight),
+        preferredSize: const Size.fromHeight(kTextTabBarHeight + 50),
         child: Align(
           alignment: Alignment.centerLeft,
           child: Padding(
             padding: const EdgeInsets.only(left: 16.0),
             child: Text('User Preferences',
-                style: Theme.of(context).textTheme.titleLarge),
+                style: Theme.of(context).textTheme.headlineLarge),
           ),
         ),
       )),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const SizedBox(height: 25),
           _buildIconScaleTile(context),
           _buildColumnNumberTile(context),
           _buildAppSortTile(context)
@@ -35,7 +36,7 @@ class UserPreferencesScreen extends StatelessWidget {
   Widget _buildIconScaleTile(BuildContext context) {
     return ListTile(
       leading: const SizedBox.shrink(),
-      title: Text('Icon Size', style: Theme.of(context).textTheme.titleSmall),
+      title: Text('Icon Size', style: Theme.of(context).textTheme.titleMedium),
       subtitle: Consumer(builder: (context, ref, child) {
         final settings = ref.watch(userSettingProvider);
         final List<double> scaleValues = [32, 40, 48, 56, 64];
@@ -68,7 +69,7 @@ class UserPreferencesScreen extends StatelessWidget {
     return ListTile(
       leading: const SizedBox.shrink(),
       title: Text('Number of Columns',
-          style: Theme.of(context).textTheme.titleSmall),
+          style: Theme.of(context).textTheme.titleMedium),
       subtitle: Consumer(builder: (context, ref, child) {
         final userSettingsProvider = ref.watch(userSettingProvider);
         final List<double> values = [3, 4, 5, 6, 7, 8];
@@ -108,9 +109,10 @@ class UserPreferencesScreen extends StatelessWidget {
               color: Colors.transparent,
             ),
             title: Text('Order of search results',
-                style: Theme.of(context).textTheme.titleSmall),
+                style: Theme.of(context).textTheme.titleMedium),
             subtitle: Text(
               userSettings.appSortMethod.toString(),
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
             onTap: () {
               controller.open();
