@@ -1,3 +1,4 @@
+import 'package:blackout_launcher/screens/home_screen/providers/search_query_provider.dart';
 import 'package:blackout_launcher/screens/home_screen/providers/show_result_provider.dart';
 import 'package:blackout_launcher/screens/home_screen/widgets/clock.dart';
 import 'package:blackout_launcher/screens/home_screen/widgets/dock/dock.dart';
@@ -63,6 +64,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       canPop: false,
       onPopInvokedWithResult: (didPop, _) {
         focusNode.unfocus();
+        ref.read(searchQueryProvider).clearQuery();
         searchController.clear();
         if (_scaffoldKey.currentState!.isDrawerOpen) {
           _scaffoldKey.currentState!.closeDrawer();
