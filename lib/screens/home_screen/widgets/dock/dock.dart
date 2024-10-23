@@ -5,8 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:installed_apps/app_info.dart';
 
 import '../../../../constants/enums/dock_styles.dart';
+import '../../../../shared/providers/favourites_provider.dart';
 import '../../../../shared/providers/user_settings_provider.dart';
-import '../../../favourite_screen/providers/favourites_provider.dart';
 import '../app_launcher/app_launcher.dart';
 
 class HomeScreenDock extends ConsumerWidget {

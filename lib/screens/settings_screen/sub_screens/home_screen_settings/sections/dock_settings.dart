@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../constants/enums/dock_styles.dart';
-import '../../shared/providers/user_settings_provider.dart';
+import '../../../../../constants/enums/dock_styles.dart';
+import '../../../../../shared/providers/user_settings_provider.dart';
 
 class DockSettings extends StatelessWidget {
   const DockSettings({super.key});
@@ -76,7 +76,7 @@ class DockSettings extends StatelessWidget {
       return MenuAnchor(
         builder: (context, controller, child) {
           return ListTile(
-            leading: Icon(
+            leading: const Icon(
               Icons.swipe_left,
               color: Colors.transparent,
             ),
@@ -84,6 +84,7 @@ class DockSettings extends StatelessWidget {
                 style: Theme.of(context).textTheme.titleSmall),
             subtitle: Text(
               userSettings.dockStyle.toString(),
+              style: Theme.of(context).textTheme.bodySmall,
             ),
             onTap: () {
               controller.open();

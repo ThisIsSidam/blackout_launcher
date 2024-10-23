@@ -1,7 +1,10 @@
-import 'package:blackout_launcher/screens/favourite_screen/favourites_screen.dart';
-import 'package:blackout_launcher/screens/hidden_apps_screen/hidden_apps_screen.dart';
 import 'package:blackout_launcher/screens/home_screen/home_screen.dart';
 import 'package:blackout_launcher/screens/settings_screen/settings_screen.dart';
+import 'package:blackout_launcher/screens/settings_screen/sub_screens/favourites_screen.dart';
+import 'package:blackout_launcher/screens/settings_screen/sub_screens/gesture_settings.dart';
+import 'package:blackout_launcher/screens/settings_screen/sub_screens/hidden_apps_screen.dart';
+import 'package:blackout_launcher/screens/settings_screen/sub_screens/home_screen_settings/HomeScreenSettings.dart';
+import 'package:blackout_launcher/screens/settings_screen/sub_screens/user_prefs_settings.dart';
 import 'package:blackout_launcher/shared/providers/user_settings_provider.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
@@ -52,6 +55,9 @@ class MyApp extends ConsumerWidget {
           '/settings_screen': (context) => const SettingsScreen(),
           '/favourites_screen': (context) => const FavouritesScreen(),
           '/hidden_apps_screen': (context) => const HiddenAppsScreen(),
+          '/user_pref_settings': (context) => const UserPreferencesScreen(),
+          '/gesture_settings': (context) => const GestureSettings(),
+          '/home_screen_settings': (context) => const HomeScreenSettings()
         },
       );
     });

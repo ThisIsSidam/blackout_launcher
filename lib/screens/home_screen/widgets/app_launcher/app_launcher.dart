@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:installed_apps/app_info.dart';
 import 'package:installed_apps/installed_apps.dart';
 
-import '../../../favourite_screen/providers/favourites_provider.dart';
+import '../../../../shared/providers/favourites_provider.dart';
 
 enum LauncherType {
   iconOnly,

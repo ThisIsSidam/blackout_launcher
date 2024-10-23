@@ -1,9 +1,4 @@
-import 'package:blackout_launcher/screens/settings_screen/dock_settings.dart';
-import 'package:blackout_launcher/screens/settings_screen/shortcuts_section.dart';
-import 'package:blackout_launcher/screens/settings_screen/user_pref_section.dart';
-import 'package:blackout_launcher/shared/back_arrow.dart';
 import 'package:flutter/material.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -13,57 +8,73 @@ class SettingsScreen extends StatelessWidget {
     return Scaffold(
         resizeToAvoidBottomInset: true,
         appBar: AppBar(
-          leading: const BackArrow(),
-          title: const Text('Settings'),
-        ),
+            bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(kTextTabBarHeight),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 16.0),
+              child: Text('Settings',
+                  style: Theme.of(context).textTheme.titleLarge),
+            ),
+          ),
+        )),
         body: SingleChildScrollView(
             child: Column(
           children: [
-            const UserPreferencesSection(),
-            _buildDivider(context),
-            const ShortcutsSection(),
-            _buildDivider(context),
-            const DockSettings(),
-            _buildVersionWidget(),
+            ListTile(
+              leading: Icon(Icons.supervised_user_circle),
+              title: Text("User Preferences",
+                  style: Theme.of(context).textTheme.titleSmall),
+              onTap: () {
+                Navigator.pushNamed(context, '/user_pref_settings');
+              },
+              subtitle: Text('App Sort',
+                  style: Theme.of(context).textTheme.bodySmall),
+            ),
+            ListTile(
+              leading: Icon(Icons.home),
+              title: Text("Home Screen",
+                  style: Theme.of(context).textTheme.titleSmall!),
+              onTap: () {
+                Navigator.pushNamed(context, '/home_screen_settings');
+              },
+              subtitle: Text('Dock, Searchbar...',
+                  style: Theme.of(context).textTheme.bodySmall),
+            ),
+            ListTile(
+                leading: const Icon(Icons.favorite),
+                title: Text(
+                  'Favourite apps',
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+                onTap: () {
+                  Navigator.pushNamed(context, '/favourites_screen');
+                },
+                subtitle: Text('Manage your favourite apps',
+                    style: Theme.of(context).textTheme.bodySmall)),
+            ListTile(
+                leading: const Icon(Icons.block),
+                title: Text(
+                  'Hidden Apps',
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+                onTap: () {
+                  Navigator.pushNamed(context, '/hidden_apps_screen');
+                },
+                subtitle: Text('Manage hidden apps',
+                    style: Theme.of(context).textTheme.bodySmall)),
+            ListTile(
+              leading: Icon(Icons.gesture),
+              title: Text("Gestures",
+                  style: Theme.of(context).textTheme.titleSmall),
+              onTap: () {
+                Navigator.pushNamed(context, '/gesture_settings');
+              },
+              subtitle: Text('Left Swipe Gesture, Right Swipe Gesture...',
+                  style: Theme.of(context).textTheme.bodySmall),
+            ),
           ],
         )));
-  }
-
-  Widget _buildDivider(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Divider(
-        color: Theme.of(context).colorScheme.onSurface,
-      ),
-    );
-  }
-
-  Widget _buildVersionWidget() {
-    final packageInfo = PackageInfo.fromPlatform();
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: FutureBuilder(
-            future: packageInfo,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const SizedBox(
-                    height: 24,
-                    width: 24,
-                    child: Center(child: CircularProgressIndicator()));
-              }
-
-              if (snapshot.hasData) {
-                return Text("v${snapshot.data!.version}",
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodySmall!
-                        .copyWith(color: Colors.grey));
-              }
-
-              return const SizedBox.shrink();
-            }),
-      ),
-    );
   }
 }

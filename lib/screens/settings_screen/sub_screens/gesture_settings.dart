@@ -4,27 +4,33 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:installed_apps/app_info.dart';
 
-import '../../constants/enums/swipe_gestures.dart';
+import '../../../constants/enums/swipe_gestures.dart';
 
-class ShortcutsSection extends StatelessWidget {
-  const ShortcutsSection({super.key});
+class GestureSettings extends StatelessWidget {
+  const GestureSettings({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        ListTile(
-          leading: const SizedBox.shrink(),
-          title: Text(
-            "Shortcuts",
-            style:
-                Theme.of(context).textTheme.titleSmall!.copyWith(fontSize: 12),
+    return Scaffold(
+      appBar: AppBar(
+          bottom: PreferredSize(
+        preferredSize: const Size.fromHeight(kTextTabBarHeight),
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 16.0),
+            child:
+                Text('Gestures', style: Theme.of(context).textTheme.titleLarge),
           ),
         ),
-        _buildRightSwipeTile(context),
-        _buildLeftSwipeTile(context),
-      ],
+      )),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildRightSwipeTile(context),
+          _buildLeftSwipeTile(context),
+        ],
+      ),
     );
   }
 
@@ -46,6 +52,7 @@ class ShortcutsSection extends StatelessWidget {
                 style: Theme.of(context).textTheme.titleSmall),
             subtitle: Text(
               subtitle,
+              style: Theme.of(context).textTheme.bodySmall,
             ),
             onTap: () {
               controller.open();
@@ -103,6 +110,7 @@ class ShortcutsSection extends StatelessWidget {
                 style: Theme.of(context).textTheme.titleSmall),
             subtitle: Text(
               subtitle,
+              style: Theme.of(context).textTheme.bodySmall,
             ),
             onTap: () {
               controller.open();

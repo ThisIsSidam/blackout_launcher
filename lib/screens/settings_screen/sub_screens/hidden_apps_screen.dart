@@ -1,24 +1,32 @@
-import 'package:blackout_launcher/screens/favourite_screen/providers/favourites_provider.dart';
 import 'package:blackout_launcher/shared/app_info_plus.dart';
 import 'package:blackout_launcher/shared/async_widget/async_widget.dart';
-import 'package:blackout_launcher/shared/back_arrow.dart';
 import 'package:blackout_launcher/shared/providers/apps_provider.dart';
+import 'package:blackout_launcher/shared/providers/hidden_apps_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:installed_apps/app_info.dart';
 
-class FavouritesScreen extends ConsumerWidget {
-  const FavouritesScreen({super.key});
+class HiddenAppsScreen extends ConsumerWidget {
+  const HiddenAppsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    List<String> favouritePackageNames =
-        ref.watch(favouritesProvider).favourites;
+    HiddenAppsNotifier hiddenNotifier = ref.watch(hiddenAppsProvider);
+    List<String> hiddenAppsPackageNames = hiddenNotifier.hiddenApps;
+
     return Scaffold(
       appBar: AppBar(
-        leading: const BackArrow(),
-        title: const Text('Favourite apps'),
-      ),
+          bottom: PreferredSize(
+        preferredSize: const Size.fromHeight(kTextTabBarHeight),
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 16.0),
+            child: Text('Hidden Apps',
+                style: Theme.of(context).textTheme.titleLarge),
+          ),
+        ),
+      )),
       body: AsyncValueWidget<List<AppInfo>>(
           value: ref.watch(appListProvider),
           data: (apps) {
@@ -30,14 +38,14 @@ class FavouritesScreen extends ConsumerWidget {
                 return ListTile(
                   leading: apps[index].getIconImage(),
                   title: Text(apps[index].name),
-                  trailing: favouritePackageNames.contains(packageName)
-                      ? const Icon(Icons.favorite, color: Colors.red)
-                      : const Icon(Icons.favorite_border),
+                  trailing: hiddenAppsPackageNames.contains(packageName)
+                      ? const Icon(Icons.remove_circle, color: Colors.red)
+                      : const Icon(Icons.remove_circle_outline),
                   onTap: () {
-                    if (favouritePackageNames.contains(packageName)) {
-                      ref.read(favouritesProvider).removeApp(packageName);
+                    if (hiddenAppsPackageNames.contains(packageName)) {
+                      hiddenNotifier.removeApp(packageName);
                     } else {
-                      ref.read(favouritesProvider).addApp(packageName);
+                      hiddenNotifier.hideApp(packageName);
                     }
                   },
                 );
