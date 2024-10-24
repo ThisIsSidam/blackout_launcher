@@ -22,7 +22,10 @@ class CustomSearchBar extends HookConsumerWidget {
     final showResults = ref.read(showResultsProvider);
 
     return Padding(
-      padding: const EdgeInsets.only(top: 16.0),
+      padding: EdgeInsets.symmetric(
+        horizontal: 8,
+        vertical: 4,
+      ),
       child: DecoratedBox(
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface.withOpacity(showResults

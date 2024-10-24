@@ -94,25 +94,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             body: AsyncValueWidget(
                 value: ref.watch(appListProvider),
                 data: (apps) {
+                  List<Widget> widgets = [
+                    Expanded(
+                      child: showResults
+                          ? const SearchResults()
+                          : const ClockWidget(),
+                    ),
+                    if (settings.enableDock) const HomeScreenDock(),
+                  ];
+
+                  // Add the Search bar at desired location
+                  widgets.insert(
+                      settings.isSearchBarPositionTop
+                          ? 0
+                          : widgets.length, // start or end of list
+                      CustomSearchBar(
+                          focusNode: focusNode, controller: searchController));
+
                   return Column(
-                    children: [
-                      AppBar(
-                        toolbarHeight: 65,
-                        backgroundColor: Colors.transparent,
-                        automaticallyImplyLeading: false,
-                        title: CustomSearchBar(
-                            focusNode: focusNode, controller: searchController),
-                      ),
-                      Expanded(
-                        child: showResults
-                            ? const Padding(
-                                padding: EdgeInsets.all(8),
-                                child: SearchResults(),
-                              )
-                            : const ClockWidget(),
-                      ),
-                      if (settings.enableDock) const HomeScreenDock(),
-                    ],
+                    children: widgets,
                   );
                 }),
           )),

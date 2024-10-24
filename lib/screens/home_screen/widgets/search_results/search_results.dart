@@ -19,32 +19,35 @@ class SearchResults extends ConsumerWidget {
     final hiddenApps = ref.watch(hiddenAppsProvider).hiddenApps;
     final query = ref.watch(searchQueryProvider).query;
     final settings = ref.watch(userSettingProvider);
-    return AsyncValueWidget<List<AppInfo>>(
-        value: ref.read(appListProvider),
-        data: (allApps) {
-          final apps = allApps
-              .where((app) => !hiddenApps.contains(app.packageName))
-              .toList();
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
+      child: AsyncValueWidget<List<AppInfo>>(
+          value: ref.read(appListProvider),
+          data: (allApps) {
+            final apps = allApps
+                .where((app) => !hiddenApps.contains(app.packageName))
+                .toList();
 
-          // Using a column because more types of results would be added.
-          // Also the child normally took entire space which wasn't good.
-          // With this it now takes only necessary space.
-          List<Widget> columnItems = [
-            _buildMathResult(context, query),
-            const SizedBox(height: 8),
-            Flexible(child: _buildResultApps(context, ref, apps)),
-          ];
+            // Using a column because more types of results would be added.
+            // Also the child normally took entire space which wasn't good.
+            // With this it now takes only necessary space.
+            List<Widget> columnItems = [
+              _buildMathResult(context, query),
+              const SizedBox(height: 8),
+              Flexible(child: _buildResultApps(context, ref, apps)),
+            ];
 
-          return Column(
-            mainAxisAlignment: settings.isTopDownSearchArrangement
-                ? MainAxisAlignment.start
-                : MainAxisAlignment.end,
-            mainAxisSize: MainAxisSize.min,
-            children: settings.isTopDownSearchArrangement
-                ? columnItems
-                : columnItems.reversed.toList(),
-          );
-        });
+            return Column(
+              mainAxisAlignment: settings.isTopDownSearchArrangement
+                  ? MainAxisAlignment.start
+                  : MainAxisAlignment.end,
+              mainAxisSize: MainAxisSize.min,
+              children: settings.isTopDownSearchArrangement
+                  ? columnItems
+                  : columnItems.reversed.toList(),
+            );
+          }),
+    );
   }
 
   Widget _buildMathResult(BuildContext context, String query) {

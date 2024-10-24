@@ -17,6 +17,41 @@ class SearchBarSettings extends StatelessWidget {
             style: Theme.of(context).textTheme.titleSmall,
           ),
         ),
+        Consumer(builder: (context, ref, child) {
+          final userSettings = ref.watch(userSettingProvider);
+          return MenuAnchor(
+            builder: (context, controller, child) {
+              return ListTile(
+                leading: const Icon(
+                  Icons.swipe_left,
+                  color: Colors.transparent,
+                ),
+                title: Text('Search bar position',
+                    style: Theme.of(context).textTheme.titleMedium),
+                subtitle: Text(
+                    userSettings.isSearchBarPositionTop ? 'Top' : 'Bottom',
+                    style: Theme.of(context).textTheme.bodyMedium),
+                onTap: () {
+                  controller.open();
+                },
+              );
+            },
+            menuChildren: [
+              MenuItemButton(
+                child: Text('Top'),
+                onPressed: () {
+                  userSettings.isSearchBarPositionTop = true;
+                },
+              ),
+              MenuItemButton(
+                child: Text('Bottom'),
+                onPressed: () {
+                  userSettings.isSearchBarPositionTop = false;
+                },
+              )
+            ],
+          );
+        }),
         ListTile(
           leading: const Icon(Icons.favorite, color: Colors.transparent),
           title: Text(

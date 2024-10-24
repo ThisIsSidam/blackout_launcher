@@ -230,6 +230,20 @@ class SettingsNotifier extends ChangeNotifier {
     UserSettingsDB.setUserSetting('hideIconsFromUnfocusedSearchBar', value);
     notifyListeners();
   }
+
+  bool get isSearchBarPositionTop {
+    final dynamic value =
+        UserSettingsDB.getUserSetting('isSearchBarPositionTop');
+    if (value == null || value is! bool) {
+      return true;
+    }
+    return value;
+  }
+
+  set isSearchBarPositionTop(bool value) {
+    UserSettingsDB.setUserSetting('isSearchBarPositionTop', value);
+    notifyListeners();
+  }
 }
 
 final userSettingProvider = ChangeNotifierProvider<SettingsNotifier>(
