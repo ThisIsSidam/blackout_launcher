@@ -182,6 +182,54 @@ class SettingsNotifier extends ChangeNotifier {
     UserSettingsDB.setUserSetting('isTopDownSearchArrangement', value);
     notifyListeners();
   }
+
+  double get unfocusedSearchBarOpacity {
+    final dynamic value =
+        UserSettingsDB.getUserSetting('unfocusedSearchBarOpacity');
+    if (value == null || value is! double) {
+      return 0;
+    }
+    if (value >= 0.0 && value <= 1.0) {
+      return value;
+    }
+    throw 'Dock opacity must be between 0.0 and 1.0';
+  }
+
+  set unfocusedSearchBarOpacity(double value) {
+    UserSettingsDB.setUserSetting('unfocusedSearchBarOpacity', value);
+    notifyListeners();
+  }
+
+  double get focusedSearchBarOpacity {
+    final dynamic value =
+        UserSettingsDB.getUserSetting('focusedSearchBarOpacity');
+    if (value == null || value is! double) {
+      return 1.0;
+    }
+    if (value >= 0.0 && value <= 1.0) {
+      return value;
+    }
+    throw 'Dock opacity must be between 0.0 and 1.0';
+  }
+
+  set focusedSearchBarOpacity(double value) {
+    UserSettingsDB.setUserSetting('focusedSearchBarOpacity', value);
+    notifyListeners();
+  }
+
+  bool get hideIconsFromUnfocusedSearchBar {
+    final dynamic value =
+        UserSettingsDB.getUserSetting('hideIconsFromUnfocusedSearchBar');
+    if (value == null || value is! bool) {
+      return true;
+    }
+    return value;
+  }
+
+  set hideIconsFromUnfocusedSearchBar(bool value) {
+    UserSettingsDB.setUserSetting('hideIconsFromUnfocusedSearchBar', value);
+    notifyListeners();
+  }
 }
 
 final userSettingProvider = ChangeNotifierProvider<SettingsNotifier>(

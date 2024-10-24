@@ -1,6 +1,6 @@
 import 'package:blackout_launcher/screens/home_screen/providers/show_result_provider.dart';
+import 'package:blackout_launcher/shared/providers/user_settings_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../providers/search_query_provider.dart';
@@ -18,14 +18,16 @@ class CustomSearchBar extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final queryProvider = ref.read(searchQueryProvider);
+    final settings = ref.watch(userSettingProvider);
+    final showResults = ref.read(showResultsProvider);
 
     return Padding(
       padding: const EdgeInsets.only(top: 16.0),
       child: DecoratedBox(
         decoration: BoxDecoration(
-          color: ref.read(showResultsProvider)
-              ? Theme.of(context).colorScheme.surface
-              : Colors.transparent,
+          color: Theme.of(context).colorScheme.surface.withOpacity(showResults
+              ? settings.focusedSearchBarOpacity
+              : settings.unfocusedSearchBarOpacity),
           borderRadius: BorderRadius.circular(25),
         ),
         child: TextField(
@@ -40,12 +42,20 @@ class CustomSearchBar extends HookConsumerWidget {
               horizontal: 16,
               vertical: 8,
             ),
-            prefixIcon: const Icon(Icons.search),
+            prefixIcon: Icon(Icons.search,
+                color: !showResults && settings.hideIconsFromUnfocusedSearchBar
+                    ? Colors.transparent
+                    : null),
             suffixIcon: InkWell(
               onTap: () => Navigator.pushNamed(context, '/settings_screen'),
-              child: const Padding(
+              child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 8),
-                child: Icon(Icons.menu, size: 20),
+                child: Icon(Icons.menu,
+                    size: 20,
+                    color:
+                        !showResults && settings.hideIconsFromUnfocusedSearchBar
+                            ? Colors.transparent
+                            : null),
               ),
             ),
             suffix: InkWell(
