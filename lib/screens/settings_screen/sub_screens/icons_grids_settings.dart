@@ -1,10 +1,9 @@
-import 'package:blackout_launcher/constants/enums/app_sort_method.dart';
 import 'package:blackout_launcher/shared/providers/user_settings_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class UserPreferencesScreen extends StatelessWidget {
-  const UserPreferencesScreen({super.key});
+class IconsAndGridSettings extends StatelessWidget {
+  const IconsAndGridSettings({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +15,7 @@ class UserPreferencesScreen extends StatelessWidget {
           alignment: Alignment.centerLeft,
           child: Padding(
             padding: const EdgeInsets.only(left: 16.0),
-            child: Text('User Preferences',
+            child: Text('Icons & Grid',
                 style: Theme.of(context).textTheme.headlineLarge),
           ),
         ),
@@ -25,11 +24,30 @@ class UserPreferencesScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 25),
+          _buildIconLabelTile(context),
           _buildIconScaleTile(context),
           _buildColumnNumberTile(context),
-          _buildAppSortTile(context)
         ],
       ),
+    );
+  }
+
+  Widget _buildIconLabelTile(BuildContext context) {
+    return ListTile(
+      leading: const Icon(Icons.favorite, color: Colors.transparent),
+      title: Text(
+        'Show labels',
+        style: Theme.of(context).textTheme.titleMedium,
+      ),
+      trailing: Consumer(builder: (context, ref, child) {
+        final settings = ref.watch(userSettingProvider);
+        return Switch(
+          value: settings.showAppLabels,
+          onChanged: (value) {
+            settings.showAppLabels = value;
+          },
+        );
+      }),
     );
   }
 
@@ -96,39 +114,5 @@ class UserPreferencesScreen extends StatelessWidget {
         );
       }),
     );
-  }
-
-  Widget _buildAppSortTile(BuildContext context) {
-    return Consumer(builder: (context, ref, child) {
-      final userSettings = ref.watch(userSettingProvider);
-      return MenuAnchor(
-        builder: (context, controller, child) {
-          return ListTile(
-            leading: const Icon(
-              Icons.swipe_left,
-              color: Colors.transparent,
-            ),
-            title: Text('Order of search results',
-                style: Theme.of(context).textTheme.titleMedium),
-            subtitle: Text(
-              userSettings.appSortMethod.toString(),
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            onTap: () {
-              controller.open();
-            },
-          );
-        },
-        menuChildren: [
-          for (AppSortMethod method in AppSortMethod.values)
-            MenuItemButton(
-              child: Text(method.toString()),
-              onPressed: () {
-                userSettings.appSortMethod = method;
-              },
-            )
-        ],
-      );
-    });
   }
 }

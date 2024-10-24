@@ -24,16 +24,6 @@ class SettingsScreen extends StatelessWidget {
           children: [
             const SizedBox(height: 25),
             ListTile(
-              leading: Icon(Icons.supervised_user_circle),
-              title: Text("User Preferences",
-                  style: Theme.of(context).textTheme.titleMedium),
-              onTap: () {
-                Navigator.pushNamed(context, '/user_pref_settings');
-              },
-              subtitle: Text('App Sort',
-                  style: Theme.of(context).textTheme.bodyMedium),
-            ),
-            ListTile(
               leading: Icon(Icons.home),
               title: Text("Home Screen",
                   style: Theme.of(context).textTheme.titleMedium!),
@@ -41,6 +31,16 @@ class SettingsScreen extends StatelessWidget {
                 Navigator.pushNamed(context, '/home_screen_settings');
               },
               subtitle: Text('Dock, Searchbar...',
+                  style: Theme.of(context).textTheme.bodyMedium),
+            ),
+            ListTile(
+              leading: Icon(Icons.supervised_user_circle),
+              title: Text("Icons & Grid",
+                  style: Theme.of(context).textTheme.titleMedium),
+              onTap: () {
+                Navigator.pushNamed(context, '/icons_grids_settings');
+              },
+              subtitle: Text('App Sort',
                   style: Theme.of(context).textTheme.bodyMedium),
             ),
             ListTile(

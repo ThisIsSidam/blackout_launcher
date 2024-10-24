@@ -1,5 +1,6 @@
 import 'package:blackout_launcher/shared/app_info_plus.dart';
 import 'package:blackout_launcher/shared/providers/hidden_apps_provider.dart';
+import 'package:blackout_launcher/shared/providers/user_settings_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:installed_apps/app_info.dart';
@@ -52,7 +53,9 @@ class AppLauncher extends ConsumerWidget {
           if (launcherType == LauncherType.iconOnly) {
             child = _buildIconButton();
           } else if (launcherType == LauncherType.iconAndText) {
-            child = _buildIconTextButton(context);
+            child = ref.read(userSettingProvider).showAppLabels
+                ? _buildIconTextButton(context)
+                : _buildIconButton();
           } else if (launcherType == LauncherType.tile) {
             child = _buildTileButton(context);
           } else {

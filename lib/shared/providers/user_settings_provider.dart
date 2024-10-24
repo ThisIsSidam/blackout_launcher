@@ -244,6 +244,19 @@ class SettingsNotifier extends ChangeNotifier {
     UserSettingsDB.setUserSetting('isSearchBarPositionTop', value);
     notifyListeners();
   }
+
+  bool get showAppLabels {
+    final dynamic value = UserSettingsDB.getUserSetting('showAppLabels');
+    if (value == null || value is! bool) {
+      return true;
+    }
+    return value;
+  }
+
+  set showAppLabels(bool value) {
+    UserSettingsDB.setUserSetting('showAppLabels', value);
+    notifyListeners();
+  }
 }
 
 final userSettingProvider = ChangeNotifierProvider<SettingsNotifier>(
