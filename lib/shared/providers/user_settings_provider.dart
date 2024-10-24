@@ -221,7 +221,7 @@ class SettingsNotifier extends ChangeNotifier {
     final dynamic value =
         UserSettingsDB.getUserSetting('hideIconsFromUnfocusedSearchBar');
     if (value == null || value is! bool) {
-      return true;
+      return false;
     }
     return value;
   }
