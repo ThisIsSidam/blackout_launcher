@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../feature/widget_manager/widget_manager_provider.dart';
@@ -104,8 +105,8 @@ class _HomeDrawerState extends ConsumerState<HomeDrawer> {
       context: context,
       builder: (context) => AvailableWidgetsSheet(
         widgets: availableWidgets,
-        onWidgetSelected: (widget) {
-          ref.read(widgetStateProvider.notifier).addWidget(widget);
+        onWidgetSelected: (widget) async {
+          await ref.read(widgetStateProvider.notifier).addWidget(widget);
           Navigator.pop(context);
         },
       ),
@@ -113,11 +114,14 @@ class _HomeDrawerState extends ConsumerState<HomeDrawer> {
   }
 }
 
+// Update your WidgetContainer class
 class WidgetContainer extends StatelessWidget {
   final WidgetInfo widget;
+  final int? appWidgetId;
 
   const WidgetContainer({
     required this.widget,
+    this.appWidgetId,
     super.key,
   });
 
@@ -130,9 +134,42 @@ class WidgetContainer extends StatelessWidget {
           minWidth: widget.minWidth.toDouble(),
           minHeight: widget.minHeight.toDouble(),
         ),
-        child: Center(
-          child: Text(widget.label), // Replace with actual widget rendering
-        ),
+        child: appWidgetId != null
+            ? AndroidWidget(
+                widgetId: appWidgetId!,
+                width: widget.minWidth.toDouble(),
+                height: widget.minHeight.toDouble(),
+              )
+            : Center(
+                child: Text(widget.label),
+              ),
+      ),
+    );
+  }
+}
+
+class AndroidWidget extends StatelessWidget {
+  final int widgetId;
+  final double width;
+  final double height;
+
+  const AndroidWidget({
+    required this.widgetId,
+    required this.width,
+    required this.height,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    // Use AndroidView to display the native widget
+    return SizedBox(
+      width: width,
+      height: height,
+      child: AndroidView(
+        viewType: 'android-widget-view',
+        creationParams: {'widgetId': widgetId},
+        creationParamsCodec: const StandardMessageCodec(),
       ),
     );
   }

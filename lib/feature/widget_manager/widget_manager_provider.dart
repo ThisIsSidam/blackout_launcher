@@ -29,11 +29,12 @@ class WidgetManager {
 }
 
 class WidgetInfo {
-  final String id;
+  final String id; // This is the provider ID (provider.provider.shortClassName)
   final String label;
   final int previewImage;
   final int minWidth;
   final int minHeight;
+  final int? appWidgetId; // The platform-assigned widget instance ID
 
   WidgetInfo({
     required this.id,
@@ -41,6 +42,7 @@ class WidgetInfo {
     required this.previewImage,
     required this.minWidth,
     required this.minHeight,
+    this.appWidgetId,
   });
 
   factory WidgetInfo.fromMap(Map<String, dynamic> map) {
@@ -50,6 +52,30 @@ class WidgetInfo {
       previewImage: map['previewImage'],
       minWidth: map['minWidth'],
       minHeight: map['minHeight'],
+      appWidgetId: map['appWidgetId'],
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'label': label,
+      'previewImage': previewImage,
+      'minWidth': minWidth,
+      'minHeight': minHeight,
+      'appWidgetId': appWidgetId,
+    };
+  }
+
+  // Helper method to create a copy with an appWidgetId
+  WidgetInfo copyWithAppWidgetId(int id) {
+    return WidgetInfo(
+      id: this.id,
+      label: this.label,
+      previewImage: this.previewImage,
+      minWidth: this.minWidth,
+      minHeight: this.minHeight,
+      appWidgetId: id,
     );
   }
 }
