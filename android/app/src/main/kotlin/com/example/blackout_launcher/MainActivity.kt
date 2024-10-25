@@ -23,15 +23,38 @@ class MainActivity : FlutterActivity() {
     private val REQUEST_BIND_WIDGET = 1
     private lateinit var providers: List<AppWidgetProviderInfo>
     private var isWidgetHostStarted = false
+    private var lastAllocatedWidgetId: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         intent.putExtra("background_mode", transparent.toString())
         super.onCreate(savedInstanceState)
 
-        // Initialize these in onCreate instead of configureFlutterEngine
-        appWidgetManager = AppWidgetManager.getInstance(context)
-        appWidgetHost = AppWidgetHost(context, WIDGET_HOST_ID)
+        appWidgetManager = AppWidgetManager.getInstance(this)
+        appWidgetHost = AppWidgetHost(this, WIDGET_HOST_ID)
         providers = appWidgetManager.installedProviders
+        Log.d("WidgetDebug", "onCreate: Found ${providers.size} widget providers")
+    }
+
+    private fun startWidgetHost() {
+        if (!isWidgetHostStarted) {
+            try {
+                appWidgetHost.startListening()
+                isWidgetHostStarted = true
+            } catch (e: Exception) {
+                Log.e("MainActivity", "Error starting widget host: ${e.message}")
+            }
+        }
+    }
+
+    private fun stopWidgetHost() {
+        if (isWidgetHostStarted) {
+            try {
+                appWidgetHost.stopListening()
+                isWidgetHostStarted = false
+            } catch (e: Exception) {
+                Log.e("MainActivity", "Error stopping widget host: ${e.message}")
+            }
+        }
     }
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
@@ -64,22 +87,8 @@ class MainActivity : FlutterActivity() {
         }
     }
 
-    override fun onDestroy() {
-        try {
-            if (isWidgetHostStarted) {
-                appWidgetHost.stopListening()
-                isWidgetHostStarted = false
-            }
-        } catch (e: Exception) {
-            Log.e("MainActivity", "Error cleaning up widget host: ${e.message}")
-        }
-        appChangePlugin?.cleanup()
-        appChangePlugin = null
-        super.onDestroy()
-    }
-
-
     private fun getAvailableWidgets(): List<Map<String, Any>> {
+        Log.d("WidgetDebug", "Available providers: ${providers.size}")
         return providers.map { provider ->
             mapOf(
                 "id" to provider.provider.shortClassName,
@@ -92,71 +101,105 @@ class MainActivity : FlutterActivity() {
     }
 
     private fun addWidget(providerId: Int, result: MethodChannel.Result) {
+        Log.d("WidgetDebug", "Starting addWidget with providerId: $providerId")
         try {
-            val appWidgetId = appWidgetHost.allocateAppWidgetId()
-            val provider = providers[providerId]
+            if (providerId >= providers.size) {
+                Log.e("WidgetDebug", "Invalid providerId: $providerId, max: ${providers.size - 1}")
+                result.error("INVALID_PROVIDER", "Invalid provider ID", null)
+                return
+            }
 
-            // Start listening before binding if not already started
+            // Allocate widget ID
+            lastAllocatedWidgetId = appWidgetHost.allocateAppWidgetId()
+            Log.d("WidgetDebug", "Allocated widget ID: $lastAllocatedWidgetId")
+
+            val provider = providers[providerId]
+            Log.d("WidgetDebug", "Selected provider: ${provider.provider.shortClassName}")
+
+            // Ensure widget host is listening
             if (!isWidgetHostStarted) {
+                Log.d("WidgetDebug", "Starting widget host")
                 appWidgetHost.startListening()
                 isWidgetHostStarted = true
             }
 
-            val success = appWidgetManager.bindAppWidgetIdIfAllowed(
-                appWidgetId,
-                provider.provider
+            // Store the result callback
+            pendingResults[lastAllocatedWidgetId] = result
+
+            // Create the bind intent
+            val bindIntent = Intent(AppWidgetManager.ACTION_APPWIDGET_BIND).apply {
+                putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, lastAllocatedWidgetId)
+                putExtra(AppWidgetManager.EXTRA_APPWIDGET_PROVIDER, provider.provider)
+            }
+
+            // Start the activity properly
+            startActivityForResult(bindIntent, REQUEST_BIND_WIDGET)
+            Log.d(
+                "WidgetDebug",
+                "Started permission activity for widget ID: $lastAllocatedWidgetId"
             )
 
-            if (success) {
-                result.success(appWidgetId)
-            } else {
-                // Request permission if needed
-                val intent = Intent(AppWidgetManager.ACTION_APPWIDGET_BIND).apply {
-                    putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-                    putExtra(AppWidgetManager.EXTRA_APPWIDGET_PROVIDER, provider.provider)
-                }
-                startActivityForResult(intent, REQUEST_BIND_WIDGET)
-            }
         } catch (e: Exception) {
+            Log.e("WidgetDebug", "Error in addWidget", e)
             result.error("WIDGET_ERROR", e.message, null)
         }
     }
 
+    // Store pending results for widget binding
+    private val pendingResults = mutableMapOf<Int, MethodChannel.Result>()
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        Log.d("WidgetDebug", "onActivityResult: requestCode=$requestCode, resultCode=$resultCode")
+
         if (requestCode == REQUEST_BIND_WIDGET) {
-            // Handle widget binding result
-            if (resultCode == Activity.RESULT_OK) {
-                val widgetId = data?.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, -1)
-                if (widgetId != -1) {
-                    // Widget was successfully bound
-                    // You might want to send this back to Flutter
+            // Use the last allocated widget ID if data is null
+            val widgetId =
+                data?.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, lastAllocatedWidgetId)
+                    ?: lastAllocatedWidgetId
+
+            Log.d("WidgetDebug", "Processing result for widget ID: $widgetId")
+
+            val result = pendingResults.remove(widgetId)
+            if (result == null) {
+                Log.e("WidgetDebug", "No pending result found for widget ID: $widgetId")
+                return
+            }
+
+            when (resultCode) {
+                Activity.RESULT_OK -> {
+                    Log.d("WidgetDebug", "Widget binding successful")
+                    // Verify the widget is actually bound
+                    val widgetInfo = appWidgetManager.getAppWidgetInfo(widgetId)
+                    if (widgetInfo != null) {
+                        result.success(widgetId)
+                    } else {
+                        Log.e("WidgetDebug", "Widget appears bound but no info available")
+                        appWidgetHost.deleteAppWidgetId(widgetId)
+                        result.error("BIND_FAILED", "Widget binding verification failed", null)
+                    }
+                }
+
+                Activity.RESULT_CANCELED -> {
+                    Log.d("WidgetDebug", "Widget binding cancelled by user")
+                    appWidgetHost.deleteAppWidgetId(widgetId)
+                    result.error("BIND_CANCELLED", "Widget binding cancelled by user", null)
+                }
+
+                else -> {
+                    Log.d("WidgetDebug", "Widget binding failed with result code: $resultCode")
+                    appWidgetHost.deleteAppWidgetId(widgetId)
+                    result.error("BIND_FAILED", "Failed to bind widget", null)
                 }
             }
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        try {
-            if (!isWidgetHostStarted) {
-                appWidgetHost.startListening()
-                isWidgetHostStarted = true
-            }
-        } catch (e: Exception) {
-            Log.e("MainActivity", "Error starting widget host: ${e.message}")
+    override fun onDestroy() {
+        if (isWidgetHostStarted) {
+            appWidgetHost.stopListening()
+            isWidgetHostStarted = false
         }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        try {
-            if (isWidgetHostStarted) {
-                appWidgetHost.stopListening()
-                isWidgetHostStarted = false
-            }
-        } catch (e: Exception) {
-            Log.e("MainActivity", "Error stopping widget host: ${e.message}")
-        }
+        super.onDestroy()
     }
 }
