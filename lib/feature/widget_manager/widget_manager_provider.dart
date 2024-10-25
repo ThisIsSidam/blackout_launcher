@@ -18,12 +18,23 @@ class WidgetManager {
 
   static Future<int?> addWidget(int providerId) async {
     try {
+      print('Requesting to add widget with providerId: $providerId');
       final int widgetId =
           await platform.invokeMethod('addWidget', {'widgetId': providerId});
+      print('Received widgetId from platform: $widgetId');
       return widgetId;
     } on PlatformException catch (e) {
       print('Error adding widget: ${e.message}');
+      print('Error details: ${e.details}');
       return null;
+    }
+  }
+
+  static Future<void> removeWidget(int widgetId) async {
+    try {
+      await platform.invokeMethod('removeWidget', {'widgetId': widgetId});
+    } on PlatformException catch (e) {
+      print('Error removing widget: ${e.message}');
     }
   }
 }

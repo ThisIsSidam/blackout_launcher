@@ -6,25 +6,28 @@ class WidgetState extends StateNotifier<List<WidgetInfo>> {
   WidgetState() : super([]);
 
   Future<void> addWidget(WidgetInfo widget) async {
-    // Get the index of the widget in the available widgets list
-    final widgetIndex =
-        state.length; // Or however you want to determine the index
+    try {
+      // Get the index of the widget in the available widgets list
+      final widgetIndex = state.length;
+      print('Adding widget at index: $widgetIndex');
 
-    // Request a new widget instance from the platform
-    final appWidgetId = await WidgetManager.addWidget(widgetIndex);
+      // Request a new widget instance from the platform
+      final appWidgetId = await WidgetManager.addWidget(widgetIndex);
+      print('Received appWidgetId: $appWidgetId');
 
-    if (appWidgetId != null) {
-      // Create new widget info with the assigned appWidgetId
-      final newWidget = WidgetInfo(
-        id: widget.id,
-        label: widget.label,
-        previewImage: widget.previewImage,
-        minWidth: widget.minWidth,
-        minHeight: widget.minHeight,
-        appWidgetId: appWidgetId,
-      );
+      if (appWidgetId != null) {
+        // Create new widget info with the assigned appWidgetId
+        final newWidget = widget.copyWithAppWidgetId(appWidgetId);
+        print('Created new widget with appWidgetId: ${newWidget.appWidgetId}');
 
-      state = [...state, newWidget];
+        state = [...state, newWidget];
+        print('Updated state with new widget. Total widgets: ${state.length}');
+        print('New widget in state has appWidgetId: ${state.last.appWidgetId}');
+      } else {
+        print('Failed to get appWidgetId from platform');
+      }
+    } catch (e) {
+      print('Error in addWidget: $e');
     }
   }
 
@@ -43,8 +46,7 @@ class WidgetState extends StateNotifier<List<WidgetInfo>> {
 
     // If the widget has an appWidgetId, you might want to clean it up on the platform side
     if (widgetToRemove.appWidgetId != null) {
-      // You could add a method to WidgetManager to handle this:
-      // await WidgetManager.removeWidget(widgetToRemove.appWidgetId!);
+      WidgetManager.removeWidget(widgetToRemove.appWidgetId!);
     }
 
     state = state.where((widget) => widget.id != id).toList();

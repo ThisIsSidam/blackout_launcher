@@ -19,6 +19,11 @@ class _HomeDrawerState extends ConsumerState<HomeDrawer> {
   Widget build(BuildContext context) {
     final widgets = ref.watch(widgetStateProvider);
 
+    print('Rebuild');
+    for (final widget in widgets) {
+      print('Widget in state: ${widget.label} ${widget.appWidgetId}');
+    }
+
     return Drawer(
       width: MediaQuery.sizeOf(context).width * 0.9,
       child: Padding(
@@ -56,10 +61,18 @@ class _HomeDrawerState extends ConsumerState<HomeDrawer> {
   }
 
   Widget _buildWidgetList(List<WidgetInfo> widgets) {
+    print('inList Method');
+    for (final widget in widgets) {
+      print('Widget in state: ${widget.label} ${widget.appWidgetId}');
+    }
+
     return ListView.builder(
       itemCount: widgets.length,
       itemBuilder: (context, index) {
-        return WidgetContainer(widget: widgets[index]);
+        return WidgetContainer(
+          widget: widgets[index],
+          appWidgetId: widgets[index].appWidgetId,
+        );
       },
     );
   }
@@ -127,6 +140,8 @@ class WidgetContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('Building WidgetContainer for widget: ${widget.label}');
+    print('Widget appWidgetId: ${appWidgetId}');
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 4),
       child: Container(
@@ -163,13 +178,18 @@ class AndroidWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Use AndroidView to display the native widget
+    print('Building AndroidWidget with ID: $widgetId');
     return SizedBox(
       width: width,
       height: height,
       child: AndroidView(
         viewType: 'android-widget-view',
+        layoutDirection: TextDirection.ltr,
         creationParams: {'widgetId': widgetId},
         creationParamsCodec: const StandardMessageCodec(),
+        onPlatformViewCreated: (int viewId) {
+          print('Android widget view created: $viewId');
+        },
       ),
     );
   }

@@ -13,26 +13,93 @@ import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 
 class MainActivity : FlutterActivity() {
-    // For AppChange Plugin
     private var appChangePlugin: AppChangePlugin? = null
-
     private val CHANNEL = "com.example.app/widgets"
-    private lateinit var appWidgetManager: AppWidgetManager
-    private lateinit var appWidgetHost: AppWidgetHost
     private val WIDGET_HOST_ID = 1024
     private val REQUEST_BIND_WIDGET = 1
-    private lateinit var providers: List<AppWidgetProviderInfo>
+
+    // Initialize these early to avoid null issues
+    private val appWidgetManager: AppWidgetManager by lazy {
+        AppWidgetManager.getInstance(this)
+    }
+
+    private val appWidgetHost: AppWidgetHost by lazy {
+        AppWidgetHost(this, WIDGET_HOST_ID)
+    }
+
+    private val providers: List<AppWidgetProviderInfo> by lazy {
+        appWidgetManager.installedProviders
+    }
+
     private var isWidgetHostStarted = false
     private var lastAllocatedWidgetId: Int = -1
+    private val pendingResults = mutableMapOf<Int, MethodChannel.Result>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         intent.putExtra("background_mode", transparent.toString())
         super.onCreate(savedInstanceState)
 
-        appWidgetManager = AppWidgetManager.getInstance(this)
-        appWidgetHost = AppWidgetHost(this, WIDGET_HOST_ID)
-        providers = appWidgetManager.installedProviders
+        // Start listening for widgets immediately
+        startWidgetHost()
+
         Log.d("WidgetDebug", "onCreate: Found ${providers.size} widget providers")
+    }
+
+    override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
+        super.configureFlutterEngine(flutterEngine)
+
+        // Initialize AppChangePlugin
+        appChangePlugin = AppChangePlugin(applicationContext, flutterEngine)
+
+        // Register the platform view factory
+        flutterEngine.platformViewsController.registry.registerViewFactory(
+            "android-widget-view",
+            AndroidWidgetViewFactory(appWidgetHost, appWidgetManager)
+        )
+
+        // Set up method channel
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
+            .setMethodCallHandler { call, result ->
+                when (call.method) {
+                    "getAvailableWidgets" -> {
+                        try {
+                            val widgets = getAvailableWidgets()
+                            result.success(widgets)
+                        } catch (e: Exception) {
+                            result.error("GET_WIDGETS_ERROR", e.message, null)
+                        }
+                    }
+
+                    "addWidget" -> {
+                        try {
+                            val widgetId = call.argument<Int>("widgetId")
+                            if (widgetId != null) {
+                                addWidget(widgetId, result)
+                            } else {
+                                result.error("INVALID_ARGS", "Widget ID is required", null)
+                            }
+                        } catch (e: Exception) {
+                            result.error("ADD_WIDGET_ERROR", e.message, null)
+                        }
+                    }
+
+                    "removeWidget" -> {
+                        try {
+                            val widgetId = call.argument<Int>("widgetId")
+                            if (widgetId != null) {
+                                appWidgetHost.deleteAppWidgetId(widgetId)
+                                result.success(null)
+                            } else {
+                                result.error("INVALID_ARGS", "Widget ID is required", null)
+                            }
+                        } catch (e: Exception) {
+                            result.error("REMOVE_WIDGET_ERROR", e.message, null)
+                        }
+                    }
+
+                    else -> result.notImplemented()
+                }
+            }
     }
 
     private fun startWidgetHost() {
@@ -40,8 +107,10 @@ class MainActivity : FlutterActivity() {
             try {
                 appWidgetHost.startListening()
                 isWidgetHostStarted = true
+                Log.d("WidgetDebug", "Widget host started successfully")
             } catch (e: Exception) {
-                Log.e("MainActivity", "Error starting widget host: ${e.message}")
+                Log.e("WidgetDebug", "Error starting widget host: ${e.message}")
+                // Don't throw - just log the error
             }
         }
     }
@@ -51,93 +120,51 @@ class MainActivity : FlutterActivity() {
             try {
                 appWidgetHost.stopListening()
                 isWidgetHostStarted = false
+                Log.d("WidgetDebug", "Widget host stopped successfully")
             } catch (e: Exception) {
-                Log.e("MainActivity", "Error stopping widget host: ${e.message}")
-            }
-        }
-    }
-
-    override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
-        super.configureFlutterEngine(flutterEngine)
-        appChangePlugin = AppChangePlugin(applicationContext, flutterEngine)
-
-        // Add this line to register the platform view factory
-//        flutterEngine.platformViewsController.registry.registerViewFactory(
-//            "android-widget-view",
-//            AndroidWidgetViewFactory(appWidgetHost, appWidgetManager)
-//        )
-
-        MethodChannel(
-            flutterEngine.dartExecutor.binaryMessenger,
-            CHANNEL
-        ).setMethodCallHandler { call, result ->
-            when (call.method) {
-                "getAvailableWidgets" -> {
-                    val widgets = getAvailableWidgets()
-                    result.success(widgets)
-                }
-
-                "addWidget" -> {
-                    val widgetId = call.argument<Int>("widgetId")!!
-                    addWidget(widgetId, result)
-                }
-
-                else -> result.notImplemented()
+                Log.e("WidgetDebug", "Error stopping widget host: ${e.message}")
+                // Don't throw - just log the error
             }
         }
     }
 
     private fun getAvailableWidgets(): List<Map<String, Any>> {
-        Log.d("WidgetDebug", "Available providers: ${providers.size}")
-        return providers.map { provider ->
+        return providers.mapIndexed { index, provider ->
             mapOf(
                 "id" to provider.provider.shortClassName,
-                "label" to provider.loadLabel(context.packageManager),
+                "label" to provider.loadLabel(packageManager),
                 "previewImage" to provider.previewImage,
                 "minWidth" to provider.minWidth,
-                "minHeight" to provider.minHeight
+                "minHeight" to provider.minHeight,
+                "providerIndex" to index  // Add index for reference
             )
         }
     }
 
     private fun addWidget(providerId: Int, result: MethodChannel.Result) {
-        Log.d("WidgetDebug", "Starting addWidget with providerId: $providerId")
         try {
             if (providerId >= providers.size) {
-                Log.e("WidgetDebug", "Invalid providerId: $providerId, max: ${providers.size - 1}")
                 result.error("INVALID_PROVIDER", "Invalid provider ID", null)
                 return
             }
 
-            // Allocate widget ID
             lastAllocatedWidgetId = appWidgetHost.allocateAppWidgetId()
-            Log.d("WidgetDebug", "Allocated widget ID: $lastAllocatedWidgetId")
-
             val provider = providers[providerId]
-            Log.d("WidgetDebug", "Selected provider: ${provider.provider.shortClassName}")
 
-            // Ensure widget host is listening
+            // Ensure host is listening
             if (!isWidgetHostStarted) {
-                Log.d("WidgetDebug", "Starting widget host")
-                appWidgetHost.startListening()
-                isWidgetHostStarted = true
+                startWidgetHost()
             }
 
-            // Store the result callback
             pendingResults[lastAllocatedWidgetId] = result
 
-            // Create the bind intent
             val bindIntent = Intent(AppWidgetManager.ACTION_APPWIDGET_BIND).apply {
                 putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, lastAllocatedWidgetId)
                 putExtra(AppWidgetManager.EXTRA_APPWIDGET_PROVIDER, provider.provider)
             }
 
-            // Start the activity properly
             startActivityForResult(bindIntent, REQUEST_BIND_WIDGET)
-            Log.d(
-                "WidgetDebug",
-                "Started permission activity for widget ID: $lastAllocatedWidgetId"
-            )
+            Log.d("WidgetDebug", "Started binding process for widget ID: $lastAllocatedWidgetId")
 
         } catch (e: Exception) {
             Log.e("WidgetDebug", "Error in addWidget", e)
@@ -145,49 +172,34 @@ class MainActivity : FlutterActivity() {
         }
     }
 
-    // Store pending results for widget binding
-    private val pendingResults = mutableMapOf<Int, MethodChannel.Result>()
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        Log.d("WidgetDebug", "onActivityResult: requestCode=$requestCode, resultCode=$resultCode")
 
         if (requestCode == REQUEST_BIND_WIDGET) {
-            // Use the last allocated widget ID if data is null
-            val widgetId =
-                data?.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, lastAllocatedWidgetId)
-                    ?: lastAllocatedWidgetId
+            val widgetId = data?.getIntExtra(
+                AppWidgetManager.EXTRA_APPWIDGET_ID,
+                lastAllocatedWidgetId
+            ) ?: lastAllocatedWidgetId
 
-            Log.d("WidgetDebug", "Processing result for widget ID: $widgetId")
-
-            val result = pendingResults.remove(widgetId)
-            if (result == null) {
-                Log.e("WidgetDebug", "No pending result found for widget ID: $widgetId")
-                return
-            }
+            val result = pendingResults.remove(widgetId) ?: return
 
             when (resultCode) {
                 Activity.RESULT_OK -> {
-                    Log.d("WidgetDebug", "Widget binding successful")
-                    // Verify the widget is actually bound
                     val widgetInfo = appWidgetManager.getAppWidgetInfo(widgetId)
                     if (widgetInfo != null) {
                         result.success(widgetId)
                     } else {
-                        Log.e("WidgetDebug", "Widget appears bound but no info available")
                         appWidgetHost.deleteAppWidgetId(widgetId)
                         result.error("BIND_FAILED", "Widget binding verification failed", null)
                     }
                 }
 
                 Activity.RESULT_CANCELED -> {
-                    Log.d("WidgetDebug", "Widget binding cancelled by user")
                     appWidgetHost.deleteAppWidgetId(widgetId)
                     result.error("BIND_CANCELLED", "Widget binding cancelled by user", null)
                 }
 
                 else -> {
-                    Log.d("WidgetDebug", "Widget binding failed with result code: $resultCode")
                     appWidgetHost.deleteAppWidgetId(widgetId)
                     result.error("BIND_FAILED", "Failed to bind widget", null)
                 }
@@ -196,10 +208,7 @@ class MainActivity : FlutterActivity() {
     }
 
     override fun onDestroy() {
-        if (isWidgetHostStarted) {
-            appWidgetHost.stopListening()
-            isWidgetHostStarted = false
-        }
+        stopWidgetHost()
         super.onDestroy()
     }
 }
