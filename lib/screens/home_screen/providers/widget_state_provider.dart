@@ -12,7 +12,7 @@ class WidgetState extends StateNotifier<List<WidgetInfo>> {
       print('Adding widget at index: $widgetIndex');
 
       // Request a new widget instance from the platform
-      final appWidgetId = await WidgetManager.addWidget(widgetIndex);
+      final appWidgetId = await WidgetManager.addWidget(widget.id);
       print('Received appWidgetId: $appWidgetId');
 
       if (appWidgetId != null) {

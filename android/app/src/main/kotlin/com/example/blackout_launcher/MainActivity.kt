@@ -72,11 +72,12 @@ class MainActivity : FlutterActivity() {
 
                     "addWidget" -> {
                         try {
-                            val widgetId = call.argument<Int>("widgetId")
-                            if (widgetId != null) {
-                                addWidget(widgetId, result)
+                            val providerId =
+                                call.argument<String>("providerId") // Changed from widgetId to providerId
+                            if (providerId != null) {
+                                addWidget(providerId, result)
                             } else {
-                                result.error("INVALID_ARGS", "Widget ID is required", null)
+                                result.error("INVALID_ARGS", "Provider ID is required", null)
                             }
                         } catch (e: Exception) {
                             result.error("ADD_WIDGET_ERROR", e.message, null)
@@ -129,27 +130,27 @@ class MainActivity : FlutterActivity() {
     }
 
     private fun getAvailableWidgets(): List<Map<String, Any>> {
-        return providers.mapIndexed { index, provider ->
+        return providers.map { provider ->
             mapOf(
-                "id" to provider.provider.shortClassName,
+                "id" to provider.provider.toString(), // Return full provider component name
                 "label" to provider.loadLabel(packageManager),
                 "previewImage" to provider.previewImage,
                 "minWidth" to provider.minWidth,
-                "minHeight" to provider.minHeight,
-                "providerIndex" to index  // Add index for reference
+                "minHeight" to provider.minHeight
             )
         }
     }
 
-    private fun addWidget(providerId: Int, result: MethodChannel.Result) {
+    private fun addWidget(providerId: String, result: MethodChannel.Result) {
         try {
-            if (providerId >= providers.size) {
-                result.error("INVALID_PROVIDER", "Invalid provider ID", null)
+            // Find the provider with matching ID
+            val provider = providers.find { it.provider.toString() == providerId }
+            if (provider == null) {
+                result.error("INVALID_PROVIDER", "Provider not found: $providerId", null)
                 return
             }
 
             lastAllocatedWidgetId = appWidgetHost.allocateAppWidgetId()
-            val provider = providers[providerId]
 
             // Ensure host is listening
             if (!isWidgetHostStarted) {

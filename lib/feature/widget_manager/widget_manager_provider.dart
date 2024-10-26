@@ -16,16 +16,14 @@ class WidgetManager {
     }
   }
 
-  static Future<int?> addWidget(int providerId) async {
+  static Future<int?> addWidget(String providerId) async {
     try {
-      print('Requesting to add widget with providerId: $providerId');
-      final int widgetId =
-          await platform.invokeMethod('addWidget', {'widgetId': providerId});
-      print('Received widgetId from platform: $widgetId');
-      return widgetId;
-    } on PlatformException catch (e) {
-      print('Error adding widget: ${e.message}');
-      print('Error details: ${e.details}');
+      final int? appWidgetId = await platform.invokeMethod('addWidget', {
+        'providerId': providerId // Pass the provider ID string
+      });
+      return appWidgetId;
+    } catch (e) {
+      print('Error adding widget: $e');
       return null;
     }
   }

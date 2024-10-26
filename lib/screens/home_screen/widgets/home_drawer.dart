@@ -207,17 +207,13 @@ class EditableWidgetContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    return Column(
       children: [
         WidgetContainer(widget: widget),
-        Positioned(
-          right: 4,
-          top: 4,
-          child: IconButton(
-            icon: const Icon(Icons.remove_circle),
-            onPressed: onRemove,
-            color: Colors.red,
-          ),
+        IconButton(
+          icon: const Icon(Icons.remove_circle),
+          onPressed: onRemove,
+          color: Colors.red,
         ),
       ],
     );
@@ -236,6 +232,9 @@ class AvailableWidgetsSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    for (final widget in widgets) {
+      print('Available widget: ${widget.label} ${widget.appWidgetId}');
+    }
     return Container(
       padding: const EdgeInsets.all(16),
       child: Column(
