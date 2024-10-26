@@ -9,20 +9,15 @@ class WidgetState extends StateNotifier<List<WidgetInfo>> {
     try {
       // Get the index of the widget in the available widgets list
       final widgetIndex = state.length;
-      print('Adding widget at index: $widgetIndex');
 
       // Request a new widget instance from the platform
       final appWidgetId = await WidgetManager.addWidget(widget.id);
-      print('Received appWidgetId: $appWidgetId');
 
       if (appWidgetId != null) {
         // Create new widget info with the assigned appWidgetId
         final newWidget = widget.copyWithAppWidgetId(appWidgetId);
-        print('Created new widget with appWidgetId: ${newWidget.appWidgetId}');
 
         state = [...state, newWidget];
-        print('Updated state with new widget. Total widgets: ${state.length}');
-        print('New widget in state has appWidgetId: ${state.last.appWidgetId}');
       } else {
         print('Failed to get appWidgetId from platform');
       }

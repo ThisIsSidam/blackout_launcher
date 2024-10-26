@@ -45,18 +45,22 @@ class _HomeDrawerState extends ConsumerState<HomeDrawer> {
   }
 
   Widget _buildHeader() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        const Text(
-          'Widgets',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-        IconButton(
-          icon: Icon(isEditing ? Icons.done : Icons.edit),
-          onPressed: () => setState(() => isEditing = !isEditing),
-        ),
-      ],
+    return Padding(
+      padding: EdgeInsets.only(
+          left: 16.0, top: MediaQuery.sizeOf(context).height * 0.03),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Text(
+            'Widgets',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          IconButton(
+            icon: Icon(isEditing ? Icons.done : Icons.edit),
+            onPressed: () => setState(() => isEditing = !isEditing),
+          ),
+        ],
+      ),
     );
   }
 
@@ -66,8 +70,9 @@ class _HomeDrawerState extends ConsumerState<HomeDrawer> {
       print('Widget in state: ${widget.label} ${widget.appWidgetId}');
     }
 
-    return ListView.builder(
+    return ListView.separated(
       itemCount: widgets.length,
+      separatorBuilder: (context, index) => const SizedBox(height: 8),
       itemBuilder: (context, index) {
         return WidgetContainer(
           widget: widgets[index],
@@ -87,12 +92,25 @@ class _HomeDrawerState extends ConsumerState<HomeDrawer> {
       },
       itemBuilder: (context, index) {
         final widget = widgets[index];
-        return EditableWidgetContainer(
-          key: ValueKey(widget.id),
-          widget: widget,
-          onRemove: () {
-            ref.read(widgetStateProvider.notifier).removeWidget(widget.id);
-          },
+        return Row(
+          key: ValueKey('row-$index-${widget.id}'),
+          children: [
+            ReorderableDragStartListener(
+              index: index,
+              child: const Icon(Icons.drag_indicator),
+            ),
+            Flexible(
+              child: EditableWidgetTile(
+                key: ValueKey(widget.id),
+                widget: widget,
+                onRemove: () {
+                  ref
+                      .read(widgetStateProvider.notifier)
+                      .removeWidget(widget.id);
+                },
+              ),
+            ),
+          ],
         );
       },
     );
@@ -140,30 +158,28 @@ class WidgetContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('Building WidgetContainer for widget: ${widget.label}');
-    print('Widget appWidgetId: ${appWidgetId}');
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 4),
-      child: Container(
-        constraints: BoxConstraints(
-          minWidth: widget.minWidth.toDouble(),
-          minHeight: widget.minHeight.toDouble(),
-        ),
-        child: appWidgetId != null
-            ? AndroidWidget(
-                widgetId: appWidgetId!,
-                width: widget.minWidth.toDouble(),
-                height: widget.minHeight.toDouble(),
-              )
-            : Center(
-                child: Text(widget.label),
-              ),
+    return Container(
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(25),
+          color: Theme.of(context).colorScheme.primary),
+      constraints: BoxConstraints(
+        minWidth: widget.minWidth.toDouble(),
+        minHeight: widget.minHeight.toDouble(),
       ),
+      child: appWidgetId != null
+          ? AndroidWidget(
+              widgetId: appWidgetId!,
+              width: widget.minWidth.toDouble(),
+              height: widget.minHeight.toDouble(),
+            )
+          : Center(
+              child: Text(widget.label),
+            ),
     );
   }
 }
 
-class AndroidWidget extends StatelessWidget {
+class AndroidWidget extends StatefulWidget {
   final int widgetId;
   final double width;
   final double height;
@@ -176,16 +192,21 @@ class AndroidWidget extends StatelessWidget {
   });
 
   @override
+  State<AndroidWidget> createState() => _AndroidWidgetState();
+}
+
+class _AndroidWidgetState extends State<AndroidWidget> {
+  @override
   Widget build(BuildContext context) {
     // Use AndroidView to display the native widget
-    print('Building AndroidWidget with ID: $widgetId');
+    print('Building AndroidWidget with ID: ${widget.widgetId}');
     return SizedBox(
-      width: width,
-      height: height,
+      width: widget.width,
+      height: widget.height,
       child: AndroidView(
         viewType: 'android-widget-view',
         layoutDirection: TextDirection.ltr,
-        creationParams: {'widgetId': widgetId},
+        creationParams: {'widgetId': widget.widgetId},
         creationParamsCodec: const StandardMessageCodec(),
         onPlatformViewCreated: (int viewId) {
           print('Android widget view created: $viewId');
@@ -195,11 +216,11 @@ class AndroidWidget extends StatelessWidget {
   }
 }
 
-class EditableWidgetContainer extends StatelessWidget {
+class EditableWidgetTile extends StatelessWidget {
   final WidgetInfo widget;
   final VoidCallback onRemove;
 
-  const EditableWidgetContainer({
+  const EditableWidgetTile({
     required this.widget,
     required this.onRemove,
     super.key,
@@ -207,11 +228,18 @@ class EditableWidgetContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Row(
       children: [
-        WidgetContainer(widget: widget),
+        Expanded(
+          child: Text(widget.label,
+              style: Theme.of(context).textTheme.titleMedium),
+        ),
         IconButton(
-          icon: const Icon(Icons.remove_circle),
+          icon: Icon(Icons.tune),
+          onPressed: () {},
+        ),
+        IconButton(
+          icon: const Icon(Icons.delete),
           onPressed: onRemove,
           color: Colors.red,
         ),
