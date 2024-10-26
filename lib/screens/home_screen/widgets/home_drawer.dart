@@ -1,8 +1,10 @@
+import 'package:blackout_launcher/models/widgets/added_widget_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../feature/widget_manager/widget_manager_provider.dart';
+import '../../../models/widgets/widget_info.dart';
 import '../providers/widget_state_provider.dart';
 
 class HomeDrawer extends ConsumerStatefulWidget {
@@ -18,11 +20,6 @@ class _HomeDrawerState extends ConsumerState<HomeDrawer> {
   @override
   Widget build(BuildContext context) {
     final widgets = ref.watch(widgetStateProvider);
-
-    print('Rebuild');
-    for (final widget in widgets) {
-      print('Widget in state: ${widget.label} ${widget.appWidgetId}');
-    }
 
     return Drawer(
       width: MediaQuery.sizeOf(context).width * 0.9,
@@ -64,25 +61,19 @@ class _HomeDrawerState extends ConsumerState<HomeDrawer> {
     );
   }
 
-  Widget _buildWidgetList(List<WidgetInfo> widgets) {
-    print('inList Method');
-    for (final widget in widgets) {
-      print('Widget in state: ${widget.label} ${widget.appWidgetId}');
-    }
-
+  Widget _buildWidgetList(List<AddedWidgetInfo> widgets) {
     return ListView.separated(
       itemCount: widgets.length,
       separatorBuilder: (context, index) => const SizedBox(height: 8),
       itemBuilder: (context, index) {
         return WidgetContainer(
           widget: widgets[index],
-          appWidgetId: widgets[index].appWidgetId,
         );
       },
     );
   }
 
-  Widget _buildEditableWidgetList(List<WidgetInfo> widgets) {
+  Widget _buildEditableWidgetList(List<AddedWidgetInfo> widgets) {
     return ReorderableListView.builder(
       itemCount: widgets.length,
       onReorder: (oldIndex, newIndex) {
@@ -93,7 +84,7 @@ class _HomeDrawerState extends ConsumerState<HomeDrawer> {
       itemBuilder: (context, index) {
         final widget = widgets[index];
         return Row(
-          key: ValueKey('row-$index-${widget.id}'),
+          key: ValueKey('row-$index-${widget.appWidgetId}'),
           children: [
             ReorderableDragStartListener(
               index: index,
@@ -101,12 +92,12 @@ class _HomeDrawerState extends ConsumerState<HomeDrawer> {
             ),
             Flexible(
               child: EditableWidgetTile(
-                key: ValueKey(widget.id),
+                key: ValueKey(widget.appWidgetId),
                 widget: widget,
                 onRemove: () {
                   ref
                       .read(widgetStateProvider.notifier)
-                      .removeWidget(widget.id);
+                      .removeWidget(widget.appWidgetId);
                 },
               ),
             ),
@@ -147,35 +138,28 @@ class _HomeDrawerState extends ConsumerState<HomeDrawer> {
 
 // Update your WidgetContainer class
 class WidgetContainer extends StatelessWidget {
-  final WidgetInfo widget;
-  final int? appWidgetId;
+  final AddedWidgetInfo widget;
 
   const WidgetContainer({
     required this.widget,
-    this.appWidgetId,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(25),
-          color: Theme.of(context).colorScheme.primary),
-      constraints: BoxConstraints(
-        minWidth: widget.minWidth.toDouble(),
-        minHeight: widget.minHeight.toDouble(),
-      ),
-      child: appWidgetId != null
-          ? AndroidWidget(
-              widgetId: appWidgetId!,
-              width: widget.minWidth.toDouble(),
-              height: widget.minHeight.toDouble(),
-            )
-          : Center(
-              child: Text(widget.label),
-            ),
-    );
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(25),
+            color: Theme.of(context).colorScheme.primary),
+        constraints: BoxConstraints(
+          minWidth: widget.minWidth.toDouble(),
+          minHeight: widget.minHeight.toDouble(),
+        ),
+        child: AndroidWidget(
+          widgetId: widget.appWidgetId,
+          width: widget.minWidth.toDouble(),
+          height: widget.minHeight.toDouble(),
+        ));
   }
 }
 
@@ -217,7 +201,7 @@ class _AndroidWidgetState extends State<AndroidWidget> {
 }
 
 class EditableWidgetTile extends StatelessWidget {
-  final WidgetInfo widget;
+  final AddedWidgetInfo widget;
   final VoidCallback onRemove;
 
   const EditableWidgetTile({
@@ -260,9 +244,6 @@ class AvailableWidgetsSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    for (final widget in widgets) {
-      print('Available widget: ${widget.label} ${widget.appWidgetId}');
-    }
     return Container(
       padding: const EdgeInsets.all(16),
       child: Column(

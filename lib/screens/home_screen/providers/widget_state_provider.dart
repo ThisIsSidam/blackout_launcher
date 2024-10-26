@@ -1,8 +1,10 @@
+import 'package:blackout_launcher/models/widgets/added_widget_info.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../feature/widget_manager/widget_manager_provider.dart';
+import '../../../models/widgets/widget_info.dart';
 
-class WidgetState extends StateNotifier<List<WidgetInfo>> {
+class WidgetState extends StateNotifier<List<AddedWidgetInfo>> {
   WidgetState() : super([]);
 
   Future<void> addWidget(WidgetInfo widget) async {
@@ -11,11 +13,11 @@ class WidgetState extends StateNotifier<List<WidgetInfo>> {
       final widgetIndex = state.length;
 
       // Request a new widget instance from the platform
-      final appWidgetId = await WidgetManager.addWidget(widget.id);
+      final appWidgetId = await WidgetManager.addWidget(widget.providerId);
 
       if (appWidgetId != null) {
-        // Create new widget info with the assigned appWidgetId
-        final newWidget = widget.copyWithAppWidgetId(appWidgetId);
+        final AddedWidgetInfo newWidget = AddedWidgetInfo.fromWidgetInfo(
+            widgetInfo: widget, appWidgetId: appWidgetId);
 
         state = [...state, newWidget];
       } else {
@@ -36,19 +38,20 @@ class WidgetState extends StateNotifier<List<WidgetInfo>> {
     state = widgets;
   }
 
-  void removeWidget(String id) {
-    final widgetToRemove = state.firstWhere((widget) => widget.id == id);
+  void removeWidget(int id) {
+    final widgetToRemove =
+        state.firstWhere((widget) => widget.appWidgetId == id);
 
     // If the widget has an appWidgetId, you might want to clean it up on the platform side
     if (widgetToRemove.appWidgetId != null) {
       WidgetManager.removeWidget(widgetToRemove.appWidgetId!);
     }
 
-    state = state.where((widget) => widget.id != id).toList();
+    state = state.where((widget) => widget.appWidgetId != id).toList();
   }
 }
 
 final widgetStateProvider =
-    StateNotifierProvider<WidgetState, List<WidgetInfo>>((ref) {
+    StateNotifierProvider<WidgetState, List<AddedWidgetInfo>>((ref) {
   return WidgetState();
 });

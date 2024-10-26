@@ -3,6 +3,7 @@ enum HiveBoxNames {
   notes('NoTeS'),
   userSettings('userSettings'),
   appLaunchData('appLaunch'),
+  addedWidgets('addedWidgets'),
   ;
 
   const HiveBoxNames(this.name);
