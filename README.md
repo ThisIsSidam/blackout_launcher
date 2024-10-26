@@ -1,16 +1,28 @@
-# blackout_launcher
+# Blackout Launcher
 
-A new Flutter project.
+A search based home screen launcher made using Flutter.
 
-## Getting Started
+## Images
 
-This project is a starting point for a Flutter application.
+<img src="screenshots/flutter_01.png" width="200" /> <img src="screenshots/flutter_02.png" width="200" /> <img src="screenshots/flutter_03.png" width="200" /> <img src="screenshots/flutter_04.png" width="200" />  
 
-A few resources to get you started if this is your first Flutter project:
+## Features
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- Search Bar for searching application.
+- Calculator in search bar.
+- Side-wise scrollable Dock with favourite application.
+- Customizations for dock and search bar.
+- A built-in notepad in side drawer.
+- Various customization settings.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Features to be implemented
+
+- Home screen widget support.
+- More built-in widgets like step-counter.
+- More gesture controls.
+- More customization settings.
+- Wikipedia search support through search bar.
+
+## License
+
+This project is licensed under the GNU GPL3. See the [LICENSE](LICENSE) file for details.
