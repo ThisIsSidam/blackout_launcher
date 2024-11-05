@@ -5,12 +5,16 @@ import android.appwidget.AppWidgetHost
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProviderInfo
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Canvas
 import android.os.Bundle
 import android.util.Log
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.android.FlutterActivityLaunchConfigs.BackgroundMode.transparent
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
+import java.io.ByteArrayOutputStream
 
 class MainActivity : FlutterActivity() {
     private var appChangePlugin: AppChangePlugin? = null
@@ -98,6 +102,25 @@ class MainActivity : FlutterActivity() {
                         }
                     }
 
+                    "loadWidgetPreviewImage" -> {
+                        try {
+                            val previewImage = call.argument<Int>("previewImage")
+                            val providerId = call.argument<String>("providerId")  // Add this line
+                            if (previewImage != null && providerId != null) {
+                                val imageData = loadWidgetPreviewImage(previewImage, providerId)
+                                result.success(imageData)
+                            } else {
+                                result.error(
+                                    "INVALID_ARGS",
+                                    "Preview image resource ID and provider ID are required",
+                                    null
+                                )
+                            }
+                        } catch (e: Exception) {
+                            result.error("LOAD_PREVIEW_ERROR", e.message, null)
+                        }
+                    }
+
                     else -> result.notImplemented()
                 }
             }
@@ -140,6 +163,108 @@ class MainActivity : FlutterActivity() {
             )
         }
     }
+
+    private fun loadWidgetPreviewImage(previewImage: Int, providerId: String): ByteArray? {
+        try {
+            // First try to get the preview from the provider's package
+            val provider = providers.find { it.provider.toString() == providerId }
+            if (provider == null) {
+                Log.e("WidgetDebug", "Provider not found for ID: $providerId")
+                return null
+            }
+
+            // Try multiple methods to get the preview
+            val bitmap: Bitmap? = tryGetPreviewBitmap(provider, previewImage)
+
+            if (bitmap != null) {
+                return ByteArrayOutputStream().use { stream ->
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                    stream.toByteArray()
+                }
+            }
+
+            Log.d("WidgetDebug", "Failed to load preview image for provider: ${provider.provider}")
+            return null
+
+        } catch (e: Exception) {
+            Log.e("WidgetDebug", "Error loading preview image: ${e.message}")
+            return null
+        }
+    }
+
+    private fun tryGetPreviewBitmap(provider: AppWidgetProviderInfo, previewImage: Int): Bitmap? {
+        try {
+            // Method 1: Try to load from provider's preview field
+            if (provider.previewImage != 0) {
+                try {
+                    val providerPackage = provider.provider.packageName
+                    val resources = packageManager.getResourcesForApplication(providerPackage)
+                    return BitmapFactory.decodeResource(resources, provider.previewImage)
+                } catch (e: Exception) {
+                    Log.d(
+                        "WidgetDebug",
+                        "Failed to load preview from provider resources: ${e.message}"
+                    )
+                }
+            }
+
+            // Method 2: Try to load preview from icon
+            if (provider.icon != 0) {
+                try {
+                    val providerPackage = provider.provider.packageName
+                    val resources = packageManager.getResourcesForApplication(providerPackage)
+                    return BitmapFactory.decodeResource(resources, provider.icon)
+                } catch (e: Exception) {
+                    Log.d(
+                        "WidgetDebug",
+                        "Failed to load icon from provider resources: ${e.message}"
+                    )
+                }
+            }
+
+            // Method 3: Try to load as drawable
+            try {
+                val drawable = provider.loadPreviewImage(this, resources.displayMetrics.densityDpi)
+                if (drawable != null) {
+                    val bitmap = Bitmap.createBitmap(
+                        drawable.intrinsicWidth,
+                        drawable.intrinsicHeight,
+                        Bitmap.Config.ARGB_8888
+                    )
+                    val canvas = Canvas(bitmap)
+                    drawable.setBounds(0, 0, canvas.width, canvas.height)
+                    drawable.draw(canvas)
+                    return bitmap
+                }
+            } catch (e: Exception) {
+                Log.d("WidgetDebug", "Failed to load preview as drawable: ${e.message}")
+            }
+
+            // Method 4: Try to load icon as drawable
+            try {
+                val drawable = provider.loadIcon(this, resources.displayMetrics.densityDpi)
+                if (drawable != null) {
+                    val bitmap = Bitmap.createBitmap(
+                        drawable.intrinsicWidth,
+                        drawable.intrinsicHeight,
+                        Bitmap.Config.ARGB_8888
+                    )
+                    val canvas = Canvas(bitmap)
+                    drawable.setBounds(0, 0, canvas.width, canvas.height)
+                    drawable.draw(canvas)
+                    return bitmap
+                }
+            } catch (e: Exception) {
+                Log.d("WidgetDebug", "Failed to load icon as drawable: ${e.message}")
+            }
+
+            return null
+        } catch (e: Exception) {
+            Log.e("WidgetDebug", "Error in tryGetPreviewBitmap: ${e.message}")
+            return null
+        }
+    }
+
 
     private fun addWidget(providerId: String, result: MethodChannel.Result) {
         try {

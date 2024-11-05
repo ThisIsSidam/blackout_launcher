@@ -242,6 +242,70 @@ class AvailableWidgetsSheet extends StatelessWidget {
     super.key,
   });
 
+  // Convert the preview image data to a widget
+  Widget _buildPreviewImage(int previewImage, String providerId) {
+    if (previewImage == 0) {
+      return const SizedBox(
+        width: 60,
+        height: 60,
+        child: Icon(Icons.widgets_outlined),
+      );
+    }
+
+    return FutureBuilder<Uint8List?>(
+      future: _loadPreviewImage(previewImage, providerId),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const SizedBox(
+            width: 60,
+            height: 60,
+            child: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        if (snapshot.hasError || !snapshot.hasData) {
+          if (snapshot.hasError) {
+            debugPrint('''Error loading preview image: ${snapshot.error}''');
+          }
+
+          if (!snapshot.hasData) {
+            debugPrint('Preview image data is null');
+          }
+          return const SizedBox(
+            width: 60,
+            height: 60,
+            child: Icon(Icons.error_outline),
+          );
+        }
+
+        return Image.memory(
+          snapshot.data!,
+          width: 60,
+          height: 60,
+          fit: BoxFit.contain,
+        );
+      },
+    );
+  }
+
+  Future<Uint8List?> _loadPreviewImage(
+      int previewImage, String providerId) async {
+    try {
+      const platform = MethodChannel('com.example.app/widgets');
+      final Uint8List? imageData = await platform.invokeMethod<Uint8List>(
+        'loadWidgetPreviewImage',
+        {
+          'previewImage': previewImage,
+          'providerId': providerId,
+        },
+      );
+      return imageData;
+    } catch (e) {
+      debugPrint('Error loading preview image: $e');
+      return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -262,6 +326,10 @@ class AvailableWidgetsSheet extends StatelessWidget {
                 final widget = widgets[index];
                 return ListTile(
                   title: Text(widget.label),
+                  subtitle: _buildPreviewImage(
+                    widget.previewImage,
+                    widget.providerId,
+                  ),
                   onTap: () => onWidgetSelected(widget),
                 );
               },
