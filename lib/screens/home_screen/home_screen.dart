@@ -2,7 +2,7 @@ import 'package:blackout_launcher/screens/home_screen/providers/search_query_pro
 import 'package:blackout_launcher/screens/home_screen/providers/show_result_provider.dart';
 import 'package:blackout_launcher/screens/home_screen/widgets/clock.dart';
 import 'package:blackout_launcher/screens/home_screen/widgets/dock/dock.dart';
-import 'package:blackout_launcher/screens/home_screen/widgets/home_drawer.dart';
+import 'package:blackout_launcher/screens/home_screen/widgets/drawer/home_drawer.dart';
 import 'package:blackout_launcher/screens/home_screen/widgets/search_bar/search_bar.dart';
 import 'package:blackout_launcher/screens/home_screen/widgets/search_results/search_results.dart';
 import 'package:blackout_launcher/screens/home_screen/widgets/swipe_detector.dart';

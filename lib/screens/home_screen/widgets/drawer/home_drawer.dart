@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../feature/widget_manager/widget_manager_provider.dart';
-import '../../../models/widgets/widget_info.dart';
-import '../providers/widget_state_provider.dart';
+import '../../../../feature/widget_manager/widget_manager_provider.dart';
+import '../../providers/widget_state_provider.dart';
+import 'available_widgets_sheet.dart';
 
 class HomeDrawer extends ConsumerStatefulWidget {
   const HomeDrawer({super.key});
@@ -228,115 +228,6 @@ class EditableWidgetTile extends StatelessWidget {
           color: Colors.red,
         ),
       ],
-    );
-  }
-}
-
-class AvailableWidgetsSheet extends StatelessWidget {
-  final List<WidgetInfo> widgets;
-  final Function(WidgetInfo) onWidgetSelected;
-
-  const AvailableWidgetsSheet({
-    required this.widgets,
-    required this.onWidgetSelected,
-    super.key,
-  });
-
-  // Convert the preview image data to a widget
-  Widget _buildPreviewImage(int previewImage, String providerId) {
-    if (previewImage == 0) {
-      return const SizedBox(
-        width: 60,
-        height: 60,
-        child: Icon(Icons.widgets_outlined),
-      );
-    }
-
-    return FutureBuilder<Uint8List?>(
-      future: _loadPreviewImage(previewImage, providerId),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const SizedBox(
-            width: 60,
-            height: 60,
-            child: Center(child: CircularProgressIndicator()),
-          );
-        }
-
-        if (snapshot.hasError || !snapshot.hasData) {
-          if (snapshot.hasError) {
-            debugPrint('''Error loading preview image: ${snapshot.error}''');
-          }
-
-          if (!snapshot.hasData) {
-            debugPrint('Preview image data is null');
-          }
-          return const SizedBox(
-            width: 60,
-            height: 60,
-            child: Icon(Icons.error_outline),
-          );
-        }
-
-        return Image.memory(
-          snapshot.data!,
-          width: 60,
-          height: 60,
-          fit: BoxFit.contain,
-        );
-      },
-    );
-  }
-
-  Future<Uint8List?> _loadPreviewImage(
-      int previewImage, String providerId) async {
-    try {
-      const platform = MethodChannel('com.example.app/widgets');
-      final Uint8List? imageData = await platform.invokeMethod<Uint8List>(
-        'loadWidgetPreviewImage',
-        {
-          'previewImage': previewImage,
-          'providerId': providerId,
-        },
-      );
-      return imageData;
-    } catch (e) {
-      debugPrint('Error loading preview image: $e');
-      return null;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Text(
-            'Available Widgets',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
-          Expanded(
-            child: ListView.builder(
-              itemCount: widgets.length,
-              itemBuilder: (context, index) {
-                final widget = widgets[index];
-                return ListTile(
-                  title: Text(widget.label),
-                  subtitle: _buildPreviewImage(
-                    widget.previewImage,
-                    widget.providerId,
-                  ),
-                  onTap: () => onWidgetSelected(widget),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
