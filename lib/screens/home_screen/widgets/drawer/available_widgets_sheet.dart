@@ -110,9 +110,7 @@ class AvailableWidgetsSheet extends StatelessWidget {
                   padding: const EdgeInsets.only(bottom: 16.0),
                   child: _buildWidgetContainer(
                     context,
-                    widget.label,
-                    widget.previewImage,
-                    widget.providerId,
+                    widget,
                   ),
                 );
               },
@@ -123,50 +121,55 @@ class AvailableWidgetsSheet extends StatelessWidget {
     );
   }
 
-  Widget _buildWidgetContainer(
-      BuildContext context, String label, int previewImage, String providerId) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primaryContainer,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Widget Name
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-            child: Text(
-              label,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: Colors.black87,
+  Widget _buildWidgetContainer(BuildContext context, WidgetInfo widget) {
+    return GestureDetector(
+      onTap: () => onWidgetSelected(widget),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.primaryContainer,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Widget Name
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+              child: Text(
+                widget.label,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black87,
+                ),
               ),
             ),
-          ),
 
-          // Widget Preview Container
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.secondaryContainer,
-              borderRadius: BorderRadius.circular(12),
+            // Widget Preview Container
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.secondaryContainer,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              child: Center(
+                child: _buildPreviewImage(
+                  widget.previewImage,
+                  widget.providerId,
+                ),
+              ),
             ),
-            margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-            child: Center(
-              child: _buildPreviewImage(previewImage, providerId),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
