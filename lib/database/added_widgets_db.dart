@@ -35,4 +35,8 @@ class AddedWidgetsDB {
     widgets.removeWhere((e) => e.appWidgetId == appWidgetId);
     _box.put(slot.key, widgets);
   }
+
+  static void updateWidgets(WidgetSlot slot, List<AddedWidgetInfo> widgets) {
+    _box.put(slot.key, widgets);
+  }
 }

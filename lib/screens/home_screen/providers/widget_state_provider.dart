@@ -35,6 +35,7 @@ class WidgetState extends StateNotifier<List<AddedWidgetInfo>> {
     final item = widgets.removeAt(oldIndex);
     widgets.insert(newIndex, item);
     state = widgets;
+    AddedWidgetsDB.updateWidgets(WidgetSlot.leftDrawer, state);
   }
 
   void removeWidget(int id) {
@@ -45,6 +46,7 @@ class WidgetState extends StateNotifier<List<AddedWidgetInfo>> {
     WidgetManager.removeWidget(widgetToRemove.appWidgetId);
 
     state = state.where((widget) => widget.appWidgetId != id).toList();
+    AddedWidgetsDB.removeWidget(WidgetSlot.leftDrawer, id);
   }
 }
 
