@@ -1,3 +1,4 @@
+import 'package:blackout_launcher/database/added_widgets_db.dart';
 import 'package:blackout_launcher/models/widgets/added_widget_info.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -5,13 +6,10 @@ import '../../../feature/widget_manager/widget_manager_provider.dart';
 import '../../../models/widgets/widget_info.dart';
 
 class WidgetState extends StateNotifier<List<AddedWidgetInfo>> {
-  WidgetState() : super([]);
+  WidgetState() : super(AddedWidgetsDB.getWidgets(WidgetSlot.leftDrawer) ?? []);
 
   Future<void> addWidget(WidgetInfo widget) async {
     try {
-      // Get the index of the widget in the available widgets list
-      final widgetIndex = state.length;
-
       // Request a new widget instance from the platform
       final appWidgetId = await WidgetManager.addWidget(widget.providerId);
 
@@ -20,6 +18,7 @@ class WidgetState extends StateNotifier<List<AddedWidgetInfo>> {
             widgetInfo: widget, appWidgetId: appWidgetId);
 
         state = [...state, newWidget];
+        AddedWidgetsDB.addWidget(WidgetSlot.leftDrawer, newWidget);
       } else {
         print('Failed to get appWidgetId from platform');
       }
@@ -43,9 +42,7 @@ class WidgetState extends StateNotifier<List<AddedWidgetInfo>> {
         state.firstWhere((widget) => widget.appWidgetId == id);
 
     // If the widget has an appWidgetId, you might want to clean it up on the platform side
-    if (widgetToRemove.appWidgetId != null) {
-      WidgetManager.removeWidget(widgetToRemove.appWidgetId!);
-    }
+    WidgetManager.removeWidget(widgetToRemove.appWidgetId);
 
     state = state.where((widget) => widget.appWidgetId != id).toList();
   }

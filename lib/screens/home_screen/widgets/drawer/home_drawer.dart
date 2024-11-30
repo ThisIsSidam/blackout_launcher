@@ -19,7 +19,7 @@ class _HomeDrawerState extends ConsumerState<HomeDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    final widgets = ref.watch(widgetStateProvider);
+    final List<AddedWidgetInfo> widgets = ref.watch(widgetStateProvider);
 
     return Drawer(
       width: MediaQuery.sizeOf(context).width * 0.9,
