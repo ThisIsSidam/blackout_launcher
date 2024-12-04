@@ -22,6 +22,7 @@ class WidgetContainer extends StatelessWidget {
         minHeight: widget.minHeight.toDouble(),
       ),
       child: AndroidWidget(
+        key: ValueKey(widget.appWidgetId),
         widgetId: widget.appWidgetId,
         width: widget.minWidth.toDouble(),
         height: widget.minHeight.toDouble(),
@@ -53,6 +54,7 @@ class _AndroidWidgetState extends State<AndroidWidget> {
       width: widget.width,
       height: widget.height,
       child: AndroidView(
+        key: ValueKey(widget.widgetId),
         viewType: 'android-widget-view',
         layoutDirection: TextDirection.ltr,
         creationParams: {'widgetId': widget.widgetId},
