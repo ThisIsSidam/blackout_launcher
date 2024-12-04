@@ -1,20 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../../../feature/widget_manager/widget_manager_provider.dart';
 import '../../../../models/widgets/widget_info.dart';
 
 class AvailableWidgetsSheet extends StatelessWidget {
-  final List<WidgetInfo> widgets;
   final Function(WidgetInfo) onWidgetSelected;
 
   const AvailableWidgetsSheet({
-    required this.widgets,
     required this.onWidgetSelected,
     super.key,
   });
-
-  // Previous methods remain the same...
-  // _loadPreviewImage and other helper methods...
 
   Widget _buildPreviewImage(int previewImage, String providerId) {
     if (previewImage == 0) {
@@ -68,7 +64,9 @@ class AvailableWidgetsSheet extends StatelessWidget {
   }
 
   Future<Uint8List?> _loadPreviewImage(
-      int previewImage, String providerId) async {
+    int previewImage,
+    String providerId,
+  ) async {
     try {
       const platform = MethodChannel('com.example.app/widgets');
       final Uint8List? imageData = await platform.invokeMethod<Uint8List>(
@@ -87,38 +85,59 @@ class AvailableWidgetsSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Text(
-            'Available Widgets',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 16),
-          Expanded(
-            child: ListView.builder(
-              itemCount: widgets.length,
-              itemBuilder: (context, index) {
-                final widget = widgets[index];
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 16.0),
-                  child: _buildWidgetContainer(
-                    context,
-                    widget,
+    final Future<List<WidgetInfo>> availableWidgets =
+        WidgetManager.getAvailableWidgets();
+
+    return FutureBuilder(
+        future: availableWidgets,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+
+          final List<WidgetInfo> widgets = snapshot.data ?? [];
+
+          if (widgets.isEmpty) {
+            return const Center(child: Text('No widgets available'));
+          }
+
+          return Container(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'Available Widgets',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
                   ),
-                );
-              },
+                ),
+                const SizedBox(height: 16),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: widgets.length,
+                    itemBuilder: (context, index) {
+                      final widget = widgets[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 16.0),
+                        child: _buildWidgetContainer(
+                          context,
+                          widget,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
-    );
+          );
+        });
   }
 
   Widget _buildWidgetContainer(BuildContext context, WidgetInfo widget) {
