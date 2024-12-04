@@ -52,6 +52,33 @@ class HomeDrawerState extends ConsumerState<HomeDrawer> {
   }
 
   Widget _buildWidgetList(List<AddedWidgetInfo> widgets) {
+    if (widgets.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Center(child: Text('No widgets added')),
+            ElevatedButton.icon(
+              icon: const Icon(Icons.add),
+              label: Text(
+                'Add Widget',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onPrimaryContainer,
+                    ),
+              ),
+              onPressed: () => _showNewWidgetPicker(),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
     return ListView.separated(
       itemCount: widgets.length,
       separatorBuilder: (context, index) => const SizedBox(height: 8),
