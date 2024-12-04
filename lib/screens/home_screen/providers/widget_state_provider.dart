@@ -28,6 +28,10 @@ class WidgetState extends StateNotifier<List<AddedWidgetInfo>> {
   }
 
   void reorderWidgets(int oldIndex, int newIndex) {
+    if (newIndex >= state.length) {
+      newIndex = state.length - 1;
+    }
+
     final widgets = [...state];
     final item = widgets.removeAt(oldIndex);
     widgets.insert(newIndex, item);

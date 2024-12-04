@@ -97,6 +97,7 @@ class HomeDrawerState extends ConsumerState<HomeDrawer> {
     List<AddedWidgetInfo> widgets,
   ) {
     return ReorderableListView.builder(
+      shrinkWrap: true,
       proxyDecorator: (child, index, animation) {
         return Material(
           type: MaterialType.transparency,
@@ -111,25 +112,14 @@ class HomeDrawerState extends ConsumerState<HomeDrawer> {
       },
       itemBuilder: (context, index) {
         final widget = widgets[index];
-        return Row(
-          key: ValueKey('row-$index-${widget.appWidgetId}'),
-          children: [
-            ReorderableDragStartListener(
-              index: index,
-              child: const Icon(Icons.drag_indicator),
-            ),
-            Flexible(
-              child: EditableWidgetTile(
-                key: ValueKey(widget.appWidgetId),
-                widget: widget,
-                onRemove: () {
-                  ref
-                      .read(widgetStateProvider.notifier)
-                      .removeWidget(widget.appWidgetId);
-                },
-              ),
-            ),
-          ],
+        return EditableWidgetTile(
+          key: ValueKey('widget: ${widget.appWidgetId} | index: $index'),
+          widget: widget,
+          onRemove: () {
+            ref
+                .read(widgetStateProvider.notifier)
+                .removeWidget(widget.appWidgetId);
+          },
         );
       },
     );
